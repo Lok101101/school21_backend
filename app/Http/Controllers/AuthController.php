@@ -14,7 +14,7 @@ class AuthController extends Controller
     public function register(RegisterRequest $request) {
         $user = User::query()->create($request->validated());
 
-        $token = $user->createToken('api_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
         $cookie = cookie(
             'auth_token',
             $token,
@@ -40,7 +40,7 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-        $token = $user->createToken('api_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
         $cookie = cookie(
             'auth_token',
             $token,
