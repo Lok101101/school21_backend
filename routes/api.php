@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PracticeRequestController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmailController;
 
@@ -11,6 +12,12 @@ Route::middleware('cookieApiToken')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/email-verify-code', [EmailController::class, 'sendVerifyCode']);
     Route::post('/verify-email', [EmailController::class, 'verifyEmailByCode']);
+
+    Route::prefix('requests')->group(function () {
+        Route::post('', [PracticeRequestController::class, 'createPracticeRequest']);
+        Route::get('', [PracticeRequestController::class, 'getPracticeRequests']);
+        Route::patch('/{id}/status', [PracticeRequestController::class, 'updatePracticeRequestStatus']);
+    });
 });
 
 Route::get('/docs', function () {

@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\CreatePracticeRequest;
+use App\Http\Requests\UpdatePracticeRequestStatus;
+use App\Models\PracticeRequest;
+use App\Models\PracticeRequestStatus;
+use Illuminate\Http\Request;
+
+class PracticeRequestController extends Controller
+{
+    public function createPracticeRequest(CreatePracticeRequest $request) {
+        $defaultStatus = PracticeRequestStatus::where('code', 'pending')->first();
+
+        $practiceRequest = PracticeRequest::create([...$request->validated(),
+            'user_id' => $request->user()->id,
+            'status_id' => $defaultStatus->id
+        ]);
+
+        $practiceRequest->status = $defaultStatus;
+        return response()->json(['practice_request' => $practiceRequest], 201);
+    }
+
+    public function getPracticeRequests(Request $request) {
+        $practiceRequests = PracticeRequest::with('status')->get();
+
+        return response()->json(['practice_requests' => $practiceRequests], 200);
+    }
+
+    public function updatePracticeRequestStatus(UpdatePracticeRequestStatus $request, $id) {
+        $practiceRequest = PracticeRequest::where('id', $id)->first();
+        if (!$practiceRequest) {
+            return response()->json(['message' => 'Такой заявки не существует'], 404);
+        }
+
+        $newStatus = PracticeRequestStatus::where('code', $request->new_status)->first();
+        $practiceRequest->update([
+            'status_id' => $newStatus->id
+        ]);
+
+        $practiceRequest->status = $newStatus;
+        return response()->json(['practice_request' => $practiceRequest], 200);
+    }
+}
