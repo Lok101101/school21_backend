@@ -30,8 +30,8 @@ class EmailController extends Controller
         ]);
 
         try {
-            Mail::html("<h1>Ваш код: <span style='color: #00dc00'>{$code}</span></h1>", function ($message) {
-                $message->to('dumdumich736@gmail.com')->subject('Код для подтверждения почты | Школа 21');
+            Mail::html("<h1>Ваш код: <span style='color: #00dc00'>{$code}</span></h1>", function ($message) use ($user) {
+                $message->to($user->email)->subject('Код для подтверждения почты | Школа 21');
             });
         } catch (\Exception $exception) {
             return response()->json('Не удалось отправить письмо на почту, попробуйте позже', 500);
