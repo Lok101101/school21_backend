@@ -371,6 +371,7 @@
                                         "name": "Иван",
                                         "surname": "Иванов",
                                         "patronymic": "Иванович",
+                                        "city": "Уфа",
                                         "specialization": "Информационные системы",
                                         "course": 3,
                                         "start_date": "2026-07-01",
@@ -401,6 +402,10 @@
                                                         "patronymic": {
                                                             "type": "string",
                                                             "example": "Иванович"
+                                                        },
+                                                        "city": {
+                                                            "type": "string",
+                                                            "example": "Уфа"
                                                         },
                                                         "specialization": {
                                                             "type": "string",
@@ -509,6 +514,7 @@
                                                     "name": "Иван",
                                                     "surname": "Иванов",
                                                     "patronymic": "Иванович",
+                                                    "city": "Уфа",
                                                     "specialization": "Backend Web Developer",
                                                     "course": 3,
                                                     "start_date": "2026-09-01",
@@ -526,6 +532,7 @@
                                                     "name": "Иван",
                                                     "surname": "Иванов",
                                                     "patronymic": "Иванович",
+                                                    "city": "Уфа",
                                                     "specialization": "Backend Web Developer",
                                                     "course": 3,
                                                     "start_date": "2026-09-01",
@@ -847,6 +854,10 @@
                             "patronymic": {
                                 "type": "string",
                                 "example": "Иванович"
+                            },
+                            "city": {
+                                "type": "string",
+                                "example": "Уфа"
                             },
                             "specialization": {
                                 "type": "string",
