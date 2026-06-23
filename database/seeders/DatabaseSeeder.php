@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PracticeRequestStatusesSeeder::class,
             RolesSeeder::class,
-            UsersSeeder::class
+//            UsersSeeder::class
         ]);
     }
 }
