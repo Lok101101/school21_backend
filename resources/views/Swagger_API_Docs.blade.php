@@ -39,7 +39,14 @@
             "info": {
                 "title": "API Школа 21",
                 "version": "1.0.0",
-                "description": "Не забывайте в каждом запросе передавать заголовок Content-Type: application/json"
+                "description": "<h4>Не забывайте в каждом запросе передавать заголовок Content-Type: application/json<br><br>" +
+                    "Уже зарегистрированные аккаунты для тестирования:<br>" +
+                    "С ролью student:<br> " +
+                    "email: student@gmail.com<br>" +
+                    "password: Test12345<br><br>" +
+                    "С ролью teamlead:<br>" +
+                    "email: teamlead@gmail.com<br>" +
+                    "password: Test12345</h4>"
             },
             "servers": [
                 {
