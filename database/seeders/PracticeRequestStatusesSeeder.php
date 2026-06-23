@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\PracticeRequestStatus;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class PracticeRequestStatusesSeeder extends Seeder
 {
@@ -12,9 +12,18 @@ class PracticeRequestStatusesSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('practice_request_statuses')->insert([
-            ['code' => 'pending', 'name' => 'На рассмотрении', 'created_at' => now(), 'updated_at' => now()],
-            ['code' => 'accepted', 'name' => 'Принята', 'created_at' => now(), 'updated_at' => now()],
-            ['code' => 'rejected', 'name' => 'Отклонена', 'created_at' => now(), 'updated_at' => now()],]);
+        $statuses = [
+            ['code' => 'pending', 'name' => 'На рассмотрении'],
+            ['code' => 'accepted', 'name' => 'Принята'],
+            ['code' => 'rejected', 'name' => 'Отклонена'],
+            ['code' => 'canceled', 'name' => 'Отменена']
+        ];
+
+        foreach ($statuses as $status) {
+            PracticeRequestStatus::updateOrCreate(
+                ['code' => $status['code']],
+                ['name' => $status['name']]
+            );
+        }
     }
 }

@@ -23,7 +23,8 @@ class UpdatePracticeRequestStatus extends FormRequest
     public function rules(): array
     {
         return [
-            'new_status' => 'required|exists:practice_request_statuses,code'
+            'new_status' => 'required|exists:practice_request_statuses,code',
+            'reason' => 'nullable|string|max:5000',
         ];
     }
 }

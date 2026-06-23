@@ -34,12 +34,19 @@ class PracticeRequestController extends Controller
             return response()->json(['message' => 'Такой заявки не существует'], 404);
         }
 
+        if ($practiceRequest->status->code !== 'pending' && $request->new_status === 'canceled') {
+            return response()->json([
+                'message' => 'Установить статус canceled можно только на заявку со статусом pending'
+            ], 422);
+        }
+
         $newStatus = PracticeRequestStatus::where('code', $request->new_status)->first();
         $practiceRequest->update([
-            'status_id' => $newStatus->id
+            'status_id' => $newStatus->id,
+            'status_change_reason' => $request->reason
         ]);
 
-        $practiceRequest->status = $newStatus;
+        $practiceRequest->setRelation('status', $newStatus);
         return response()->json(['practice_request' => $practiceRequest], 200);
     }
 }
