@@ -434,7 +434,7 @@
                     "get": {
                         "tags": ["Заявки на практику"],
                         "summary": "Получение списка всех заявок",
-                        "description": "Требует наличия токена в cookie и подтверждённого email. Возвращает массив всех существующих заявок на практику из базы данных.",
+                        "description": "Требует наличия токена в cookie, подтверждённого email и роли `teamlead`. Возвращает массив всех существующих заявок на практику из базы данных.",
                         "security": [
                             {
                                 "CookieAuth": []
@@ -463,11 +463,22 @@
                                 "$ref": "#/components/responses/401Unauthorized"
                             },
                             "403": {
-                                "description": "Почта не подтверждена",
+                                "description": "Не подтверждена почта/отсутствует роль teamlead",
                                 "content": {
                                     "application/json": {
-                                        "example": {
-                                            "message": "Your email address is not verified."
+                                        "examples": {
+                                            "unverifiedEmail": {
+                                                "summary": "Не подтверждена почта",
+                                                "value": {
+                                                    "message": "Your email address is not verified."
+                                                }
+                                            },
+                                            "trySetNotCanceledStatusWithoutTeamleadRole": {
+                                                "summary": "Нет роли teamlead",
+                                                "value": {
+                                                    "message": "Доступ запрещён"
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -479,7 +490,13 @@
                     "patch": {
                         "tags": ["Заявки на практику"],
                         "summary": "Обновление статуса заявки",
-                        "description": "Требует наличия токена в cookie и подтверждённого email. Ищет заявку по параметру `id` из URL. Если заявка не найдена — возвращает 404. Если найдена — обновляет её статус в соответствии с переданным кодом нового статуса и добавляет причину изменения статуса из опционального поля `reason`. Список доступных статусов: `pending`, `accepted`, `rejected`, `canceled`",
+                        "description": "Требует наличия токена в cookie и подтверждённого email. " +
+                            "Для изменения статуса на `pending`, `accepted` или `rejected` требуется " +
+                            "роль `teamlead`. Поменять статус на `canceled` можно без роли `teamlead`. " +
+                            "<br><br>Ищет заявку по параметру `id` из URL. Если заявка не найдена — возвращает 404. " +
+                            "Если найдена — обновляет её статус в соответствии с переданным кодом нового " +
+                            "статуса и добавляет причину изменения статуса из опционального поля `reason`. " +
+                            "Список доступных статусов: `pending`, `accepted`, `rejected`, `canceled`",
                         "security": [
                             {
                                 "CookieAuth": []
@@ -551,11 +568,23 @@
                                 "$ref": "#/components/responses/401Unauthorized"
                             },
                             "403": {
-                                "description": "Почта не подтверждена",
+                                "description": "Почта не подтверждена/попытка сменить статус на " +
+                                    "`pending`, `accepted`, `rejected` без роли `teamlead`",
                                 "content": {
                                     "application/json": {
-                                        "example": {
-                                            "message": "Your email address is not verified."
+                                        "examples": {
+                                            "unverifiedEmail": {
+                                                "summary": "Не подтверждена почта",
+                                                "value": {
+                                                    "message": "Your email address is not verified."
+                                                }
+                                            },
+                                            "trySetNotCanceledStatusWithoutTeamleadRole": {
+                                                "summary": "Нет роли teamlead",
+                                                "value": {
+                                                    "message": "Доступ запрещён"
+                                                }
+                                            }
                                         }
                                     }
                                 }
