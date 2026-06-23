@@ -24,6 +24,10 @@ class PracticeRequestController extends Controller
 
     public function getPracticeRequests(Request $request) {
         $practiceRequests = PracticeRequest::with('status')->get();
+        $practiceRequests->makeHidden('status_change_reason');
+        $practiceRequests
+            ->value('status')
+            ->setAttribute('change_reason', $practiceRequests->value('status_change_reason'));
 
         return response()->json(['practice_requests' => $practiceRequests], 200);
     }
@@ -46,7 +50,9 @@ class PracticeRequestController extends Controller
             'status_change_reason' => $request->reason
         ]);
 
+        $newStatus->setAttribute('change_reason', $request->reason);
         $practiceRequest->setRelation('status', $newStatus);
+        $practiceRequest->makeHidden('status_change_reason');
         return response()->json(['practice_request' => $practiceRequest], 200);
     }
 }

@@ -334,7 +334,67 @@
                                             "type": "object",
                                             "properties": {
                                                 "practice_request": {
-                                                    "$ref": "#/components/schemas/PracticeRequestModel"
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Иван"
+                                                        },
+                                                        "surname": {
+                                                            "type": "string",
+                                                            "example": "Иванов"
+                                                        },
+                                                        "patronymic": {
+                                                            "type": "string",
+                                                            "example": "Иванович"
+                                                        },
+                                                        "specialization": {
+                                                            "type": "string",
+                                                            "example": "Информационные системы"
+                                                        },
+                                                        "course": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "start_date": {
+                                                            "type": "string",
+                                                            "format": "date",
+                                                            "example": "2026-07-01"
+                                                        },
+                                                        "end_date": {
+                                                            "type": "string",
+                                                            "format": "date",
+                                                            "example": "2026-08-31"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2026-06-21T20:00:00.000000Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2026-06-21T20:05:00.000000Z"
+                                                        },
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "status": {
+                                                            "type": "object",
+                                                            "description": "Текущий статус заявки",
+                                                            "properties": {
+                                                                "code": {
+                                                                    "type": "string",
+                                                                    "example": "pending"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "На рассмотрении"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -450,11 +510,11 @@
                                                                     "properties": {
                                                                         "code": {
                                                                             "type": "string",
-                                                                            "example": "accepted"
+                                                                            "example": "rejected"
                                                                         },
                                                                         "name": {
                                                                             "type": "string",
-                                                                            "example": "Принята"
+                                                                            "example": "Отклонена"
                                                                         }
                                                                     }
                                                                 }
@@ -688,11 +748,15 @@
                                 "properties": {
                                     "code": {
                                         "type": "string",
-                                        "example": "pending"
+                                        "example": "rejected"
                                     },
                                     "name": {
                                         "type": "string",
-                                        "example": "На рассмотрении"
+                                        "example": "Отклонена",
+                                    },
+                                    "change_reason": {
+                                        "type": "string",
+                                        "example": "Вы нам не подходите"
                                     }
                                 }
                             }
