@@ -22,13 +22,29 @@ class PracticeRequestController extends Controller
         return response()->json(['practice_request' => $practiceRequest], 201);
     }
 
-    public function getPracticeRequests(Request $request) {
+    public function getAllPracticeRequests(Request $request) {
         $practiceRequests = PracticeRequest::with('status')->get();
+        if ($practiceRequests->isEmpty()) {
+            return response()->json(['practice_requests' => []], 200);
+        }
+
         $practiceRequests->makeHidden('status_change_reason');
         $practiceRequests
             ->value('status')
             ->setAttribute('change_reason', $practiceRequests->value('status_change_reason'));
+        return response()->json(['practice_requests' => $practiceRequests], 200);
+    }
 
+    public function getUserPracticeRequests(Request $request) {
+        $practiceRequests = PracticeRequest::with('status')->where('user_id', $request->user()->id)->get();
+        if ($practiceRequests->isEmpty()) {
+            return response()->json(['practice_requests' => []], 200);
+        }
+
+        $practiceRequests->makeHidden('status_change_reason');
+        $practiceRequests
+            ->value('status')
+            ->setAttribute('change_reason', $practiceRequests->value('status_change_reason'));
         return response()->json(['practice_requests' => $practiceRequests], 200);
     }
 

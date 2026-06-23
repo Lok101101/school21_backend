@@ -297,6 +297,60 @@
                     }
                 },
                 "/requests": {
+                    "get": {
+                        "tags": ["Заявки на практику"],
+                        "summary": "Получение списка всех заявок",
+                        "description": "Требует наличия токена в cookie, подтверждённого email и роли `teamlead`. Возвращает массив всех существующих заявок на практику из базы данных.",
+                        "security": [
+                            {
+                                "CookieAuth": []
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Успешное получение списка.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "practice_requests": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/PracticeRequestModel"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "401": {
+                                "$ref": "#/components/responses/401Unauthorized"
+                            },
+                            "403": {
+                                "description": "Не подтверждена почта/отсутствует роль teamlead",
+                                "content": {
+                                    "application/json": {
+                                        "examples": {
+                                            "unverifiedEmail": {
+                                                "summary": "Не подтверждена почта",
+                                                "value": {
+                                                    "message": "Your email address is not verified."
+                                                }
+                                            },
+                                            "trySetNotCanceledStatusWithoutTeamleadRole": {
+                                                "summary": "Нет роли teamlead",
+                                                "value": {
+                                                    "message": "Доступ запрещён"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                        }
+                    },
                     "post": {
                         "tags": ["Заявки на практику"],
                         "summary": "Создание новой заявки на практику",
@@ -430,11 +484,14 @@
                                 }
                             }
                         }
-                    },
+                    }
+                },
+                "/requests/my": {
                     "get": {
                         "tags": ["Заявки на практику"],
-                        "summary": "Получение списка всех заявок",
-                        "description": "Требует наличия токена в cookie, подтверждённого email и роли `teamlead`. Возвращает массив всех существующих заявок на практику из базы данных.",
+                        "summary": "Получение списка всех заявок пользователя",
+                        "description": "Требует наличия токена в cookie и подтверждённого email. Возвращает " +
+                            "список всех заявок текущего авторизованного пользователя",
                         "security": [
                             {
                                 "CookieAuth": []
@@ -442,47 +499,69 @@
                         ],
                         "responses": {
                             "200": {
-                                "description": "Успешное получение списка.",
+                                "description": "Успешное получение списка",
                                 "content": {
                                     "application/json": {
-                                        "schema": {
-                                            "type": "object",
-                                            "properties": {
-                                                "practice_requests": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/PracticeRequestModel"
+                                        "example": {
+                                            "practice_requests": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "Иван",
+                                                    "surname": "Иванов",
+                                                    "patronymic": "Иванович",
+                                                    "specialization": "Backend Web Developer",
+                                                    "course": 3,
+                                                    "start_date": "2026-09-01",
+                                                    "end_date": "2026-10-31",
+                                                    "created_at": "2026-06-23T19:47:00.000000Z",
+                                                    "updated_at": "2026-06-23T20:37:38.000000Z",
+                                                    "status": {
+                                                        "code": "rejected",
+                                                        "name": "Отклонена",
+                                                        "change_reason": "Вы нам не подходите"
+                                                    }
+                                                },
+                                                {
+                                                    "id": 3,
+                                                    "name": "Иван",
+                                                    "surname": "Иванов",
+                                                    "patronymic": "Иванович",
+                                                    "specialization": "Backend Web Developer",
+                                                    "course": 3,
+                                                    "start_date": "2026-09-01",
+                                                    "end_date": "2026-10-31",
+                                                    "created_at": "2026-06-23T20:47:39.000000Z",
+                                                    "updated_at": "2026-06-23T20:47:39.000000Z",
+                                                    "status": {
+                                                        "code": "pending",
+                                                        "name": "На рассмотрении"
                                                     }
                                                 }
-                                            }
+                                            ]
                                         }
                                     }
                                 }
                             },
                             "401": {
-                                "$ref": "#/components/responses/401Unauthorized"
-                            },
-                            "403": {
-                                "description": "Не подтверждена почта/отсутствует роль teamlead",
+                                "description": "Нет токена в cookie/невалидный или устаревший токен",
                                 "content": {
                                     "application/json": {
-                                        "examples": {
-                                            "unverifiedEmail": {
-                                                "summary": "Не подтверждена почта",
-                                                "value": {
-                                                    "message": "Your email address is not verified."
-                                                }
-                                            },
-                                            "trySetNotCanceledStatusWithoutTeamleadRole": {
-                                                "summary": "Нет роли teamlead",
-                                                "value": {
-                                                    "message": "Доступ запрещён"
-                                                }
-                                            }
+                                        "example": {
+                                            "message": "Нет токена в cookie"
+                                        },
+                                    }
+                                },
+                            },
+                            "403": {
+                                "description": "Почта не подтверждена",
+                                "content": {
+                                    "application/json": {
+                                        "example": {
+                                            "message": "Your email address is not verified."
                                         }
                                     }
                                 }
-                            },
+                            }
                         }
                     }
                 },

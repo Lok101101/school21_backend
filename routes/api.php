@@ -16,7 +16,8 @@ Route::middleware('cookieApiToken')->group(function () {
     Route::middleware('verified')->group(function () {
         Route::prefix('requests')->group(function () {
             Route::post('', [PracticeRequestController::class, 'createPracticeRequest']);
-            Route::get('', [PracticeRequestController::class, 'getPracticeRequests'])->middleware('role:teamlead');
+            Route::get('', [PracticeRequestController::class, 'getAllPracticeRequests'])->middleware('role:teamlead');
+            Route::get('/my', [PracticeRequestController::class, 'getUserPracticeRequests']);
             Route::patch('/{id}/status', [PracticeRequestController::class, 'updatePracticeRequestStatus']);
         });
     });
