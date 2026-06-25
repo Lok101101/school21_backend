@@ -343,7 +343,7 @@
                                             "unverifiedEmail": {
                                                 "summary": "Не подтверждена почта",
                                                 "value": {
-                                                    "message": "Your email address is not verified."
+                                                    "message": "Почта не подтверждена"
                                                 }
                                             },
                                             "trySetNotCanceledStatusWithoutTeamleadRole": {
@@ -475,7 +475,7 @@
                                 "content": {
                                     "application/json": {
                                         "example": {
-                                            "message": "Your email address is not verified."
+                                            "message": "Почта не подтверждена"
                                         }
                                     }
                                 }
@@ -571,7 +571,7 @@
                                 "content": {
                                     "application/json": {
                                         "example": {
-                                            "message": "Your email address is not verified."
+                                            "message": "Почта не подтверждена"
                                         }
                                     }
                                 }
@@ -669,7 +669,7 @@
                                             "unverifiedEmail": {
                                                 "summary": "Не подтверждена почта",
                                                 "value": {
-                                                    "message": "Your email address is not verified."
+                                                    "message": "Почта не подтверждена"
                                                 }
                                             },
                                             "trySetNotCanceledStatusWithoutTeamleadRole": {
