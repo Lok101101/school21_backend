@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreatePracticeRequest;
+use App\Http\Requests\GetByCityPracticeRequest;
 use App\Http\Requests\UpdatePracticeRequestStatus;
 use App\Models\PracticeRequest;
 use App\Models\PracticeRequestStatus;
@@ -22,8 +23,8 @@ class PracticeRequestController extends Controller
         return response()->json(['practice_request' => $practiceRequest], 201);
     }
 
-    public function getAllPracticeRequests(Request $request) {
-        $practiceRequests = PracticeRequest::with('status')->get();
+    public function getAllPracticeRequestsByCity(Request $request) {
+        $practiceRequests = PracticeRequest::with('status')->where('city', $request->user()->city)->get();
         if ($practiceRequests->isEmpty()) {
             return response()->json(['practice_requests' => []], 200);
         }
