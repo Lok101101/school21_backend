@@ -13,7 +13,7 @@ Route::middleware('cookieApiToken')->group(function () {
     Route::post('/email-verify-code', [EmailController::class, 'sendVerifyCode']);
     Route::post('/verify-email', [EmailController::class, 'verifyEmailByCode']);
 
-    Route::middleware('verified')->group(function () {
+    Route::middleware('emailVerifiedForAPI')->group(function () {
         Route::prefix('requests')->group(function () {
             Route::post('', [PracticeRequestController::class, 'createPracticeRequest']);
             Route::get('', [PracticeRequestController::class, 'getAllPracticeRequests'])->middleware('role:teamlead');
