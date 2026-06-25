@@ -16,7 +16,7 @@ class EmailVerifiedForAPI
     public function handle(Request $request, Closure $next): Response
     {
         if (!$request->user()->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Доступ запрещён'], 401);
+            return response()->json(['message' => 'Почта не подтверждена'], 403);
         }
         return $next($request);
     }
