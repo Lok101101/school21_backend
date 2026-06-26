@@ -16,8 +16,16 @@ class PracticeRequestController extends Controller
     public function createPracticeRequest(CreatePracticeRequest $request) {
         $user = $request->user();
 
-        if ($request->user()->hasActivePractice()) {
-            return response()->json(['message' => 'У пользователя уже есть активная практика'], 422);
+        if ($user->hasActivePractice()) {
+            return response()->json(['message' => 'У пользователя есть активная практика'], 422);
+        }
+
+        if ($user->hasPendingPracticeRequest()) {
+            return response()->json(['message' => 'У пользователя есть заявка на рассмотрении'], 422);
+        }
+
+        if ($user->practiceRequestsLastWeekCount() >= 3) {
+            return response()->json(['message' => 'Пользователь подал уже 3 заявки за неделю'], 422);
         }
 
         $defaultStatus = PracticeRequestStatus::where('code', 'pending')->first();

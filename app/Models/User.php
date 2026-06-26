@@ -43,6 +43,26 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Role::class);
     }
 
+    public function practiceRequests(): HasMany
+    {
+        return $this->hasMany(PracticeRequest::class, 'user_id');
+    }
+
+    public function hasPendingPracticeRequest(): bool
+    {
+        return $this->practiceRequests()
+            ->whereHas('status', function ($query) {
+                $query->where('code', 'pending');
+            })->exists();
+    }
+
+    public function practiceRequestsLastWeekCount(): int
+    {
+        return $this->practiceRequests()
+            ->where('created_at', '>', now()->subDays(7))
+            ->count();
+    }
+
     public function hasActivePractice(): bool
     {
         return $this->belongsToMany(
