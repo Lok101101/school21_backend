@@ -77,7 +77,9 @@ class PracticeRequestController extends Controller
             ], 422);
         }
 
-        if ($request->new_status !== 'canceled' && $request->user()->role->code !== 'teamlead') {
+        $user = $request->user();
+
+        if ($user->role->code !== 'teamlead' && ($request->new_status !== 'canceled' || $practiceRequest->user_id !== $user->id)) {
             return response()->json(['message' => 'Доступ запрещён'], 403);
         }
 
