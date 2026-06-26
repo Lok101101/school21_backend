@@ -693,7 +693,8 @@
                             },
                             "403": {
                                 "description": "Почта не подтверждена/попытка сменить статус на " +
-                                    "`pending`, `accepted`, `rejected` без роли `teamlead`",
+                                    "`pending`, `accepted`, `rejected` без роли `teamlead`/попытка пользователем " +
+                                    "с ролью `student` изменить статус чужой заявки",
                                 "content": {
                                     "application/json": {
                                         "examples": {
@@ -704,7 +705,7 @@
                                                 }
                                             },
                                             "trySetNotCanceledStatusWithoutTeamleadRole": {
-                                                "summary": "Нет роли teamlead",
+                                                "summary": "Нет роли teamlead/изменение чужой заявки",
                                                 "value": {
                                                     "message": "Доступ запрещён"
                                                 }
