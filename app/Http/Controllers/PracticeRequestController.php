@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreatePracticeRequest;
 use App\Http\Requests\GetByCityPracticeRequest;
 use App\Http\Requests\UpdatePracticeRequestStatus;
+use App\Models\PracticeGroup;
 use App\Models\PracticeRequest;
 use App\Models\PracticeRequestStatus;
+use App\Models\UserPracticeGroup;
 use Illuminate\Http\Request;
 
 class PracticeRequestController extends Controller
 {
     public function createPracticeRequest(CreatePracticeRequest $request) {
+        $user = $request->user();
+
+        if ($request->user()->hasActivePractice()) {
+            return response()->json(['message' => 'У пользователя уже есть активная практика'], 422);
+        }
+
         $defaultStatus = PracticeRequestStatus::where('code', 'pending')->first();
 
         $practiceRequest = PracticeRequest::create([...$request->validated(),
-            'user_id' => $request->user()->id,
-            'status_id' => $defaultStatus->id
+            'user_id' => $user->id,
+            'status_id' => $defaultStatus->id,
         ]);
 
         $practiceRequest->status = $defaultStatus;
@@ -70,6 +78,21 @@ class PracticeRequestController extends Controller
             'status_id' => $newStatus->id,
             'status_change_reason' => $request->reason
         ]);
+
+        if ($request->new_status === 'accepted') {
+            $group = PracticeGroup::firstOrCreate(
+                ['start_date' => $practiceRequest->start_date, 'end_date' => $practiceRequest->end_date],
+                [
+                    'name' => $practiceRequest->start_date->format('d.m.Y').' - '.$practiceRequest->end_date->format('d.m.Y'),
+                    'city' => $practiceRequest->city
+                ]
+            );
+
+            UserPracticeGroup::create([
+                'user_id' => $practiceRequest->user_id,
+                'group_id' => $group->id
+            ]);
+        }
 
         $newStatus->setAttribute('change_reason', $request->reason);
         $practiceRequest->setRelation('status', $newStatus);

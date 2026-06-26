@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PracticeGroupController;
 use App\Http\Controllers\PracticeRequestController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmailController;
@@ -19,6 +20,11 @@ Route::middleware('cookieApiToken')->group(function () {
             Route::get('', [PracticeRequestController::class, 'getAllPracticeRequestsByCity'])->middleware('role:teamlead');
             Route::get('/my', [PracticeRequestController::class, 'getUserPracticeRequests']);
             Route::patch('/{id}/status', [PracticeRequestController::class, 'updatePracticeRequestStatus']);
+        });
+
+        Route::prefix('groups')->group(function () {
+            Route::get('/my', [PracticeGroupController::class, 'getUserGroups']);
+            Route::get('', [PracticeGroupController::class, 'getAllGroups'])->middleware('role:teamlead');
         });
     });
 });

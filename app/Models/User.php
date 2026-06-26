@@ -42,4 +42,27 @@ class User extends Authenticatable implements MustVerifyEmail
     public function role(): BelongsTo {
         return $this->belongsTo(Role::class);
     }
+
+    public function hasActivePractice(): bool
+    {
+        return $this->belongsToMany(
+            PracticeGroup::class,
+            'user_practice_groups',
+            'user_id',
+            'group_id'
+        )
+            ->using(UserPracticeGroup::class)
+            ->where('end_date', '>', now()->toDateString())
+            ->exists();
+    }
+
+    public function practiceGroups()
+    {
+        return $this->belongsToMany(
+            PracticeGroup::class,
+            'user_practice_groups',
+            'user_id',
+            'group_id'
+        );
+    }
 }

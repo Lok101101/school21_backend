@@ -14,4 +14,12 @@ class PracticeRequest extends Model
     public function status() {
         return $this->belongsTo(PracticeRequestStatus::class, 'status_id');
     }
+
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'date:Y-m-d',
+            'end_date' => 'date:Y-m-d'
+        ];
+    }
 }

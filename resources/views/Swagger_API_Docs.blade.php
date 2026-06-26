@@ -361,7 +361,10 @@
                     "post": {
                         "tags": ["Заявки на практику"],
                         "summary": "Создание новой заявки на практику",
-                        "description": "Требует наличия токена в cookie и подтверждённого email. Принимает данные от студента, валидирует их и создаёт заявку от имени текущего авторизованного пользователя со статусом `На рассмотрении`",
+                        "description": "Требует наличия токена в cookie и подтверждённого email. Принимает данные от " +
+                            "студента, валидирует их и создаёт заявку от имени текущего авторизованного пользователя " +
+                            "со статусом `На рассмотрении`. Если у пользователя уже есть активная практика — возвращает " +
+                            "ошибку",
                         "security": [
                             {
                                 "CookieAuth": []
@@ -484,12 +487,23 @@
                                 "description": "Ошибка валидации данных",
                                 "content": {
                                     "application/json": {
-                                        "example": {
-                                            "message": "Поле name обязательно для заполнения.",
-                                            "errors": {
-                                                "name": ["Поле name обязательно для заполнения."],
-                                                "course": ["Значение поля course должно быть между 1 и 10."],
-                                                "end_date": ["Поле end_date должно быть датой после start_date."]
+                                        "examples": {
+                                            "validationError": {
+                                                "summary": "Ошибка валидации",
+                                                "value": {
+                                                    "message": "Поле name обязательно для заполнения.",
+                                                    "errors": {
+                                                        "name": ["Поле name обязательно для заполнения."],
+                                                        "course": ["Значение поля course должно быть между 1 и 10."],
+                                                        "end_date": ["Поле end_date должно быть датой после start_date."]
+                                                    }
+                                                }
+                                            },
+                                            "hasActivePracticeError": {
+                                                "summary": "Есть активная практика",
+                                                "value": {
+                                                    "message": "У пользователя уже есть активная практика"
+                                                }
                                             }
                                         }
                                     }
@@ -588,7 +602,9 @@
                             "роль `teamlead`. Поменять статус на `canceled` можно без роли `teamlead`. " +
                             "<br><br>Ищет заявку по параметру `id` из URL. Если заявка не найдена — возвращает 404. " +
                             "Если найдена — обновляет её статус в соответствии с переданным кодом нового " +
-                            "статуса и добавляет причину изменения статуса из опционального поля `reason`. " +
+                            "статуса и добавляет причину изменения статуса из опционального поля `reason`, " +
+                            "а также, если статус меняется на `accepted` — создаёт новую группу практики, либо берёт " +
+                            "уже существующую и добавляет туда пользователя.<br> " +
                             "Список доступных статусов: `pending`, `accepted`, `rejected`, `canceled`",
                         "security": [
                             {
@@ -719,6 +735,161 @@
                             }
                         }
                     }
+                },
+                "/groups/my": {
+                    "get": {
+                        "summary": "Получение списка групп пользователя",
+                        "description": "Требует наличия токена в cookie и подтверждённого email. Возвращает массив всех существующих групп практик пользователя",
+                        "tags": ["Группы практик"],
+                        "responses": {
+                            "200": {
+                                "description": "Успешное получение списка групп.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "user_groups": {
+                                                    "type": "array",
+                                                    "description": "Массив групп практик пользователя",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": { "type": "integer", "description": "ID группы" },
+                                                            "name": { "type": "string", "description": "Название группы" },
+                                                            "city": { "type": "string", "description": "Город практики" },
+                                                            "start_date": { "type": "string", "format": "date", "description": "Дата начала" },
+                                                            "end_date": { "type": "string", "format": "date", "description": "Дата окончания" },
+                                                            "created_at": { "type": "string", "format": "date-time", "description": "Дата создания" },
+                                                            "updated_at": { "type": "string", "format": "date-time", "description": "Дата обновления" },
+                                                            "is_active": { "type": "boolean", "description": "Флаг активности группы" }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "example": {
+                                                "user_groups": [
+                                                    {
+                                                        "id": 6,
+                                                        "name": "01.09.2026 - 31.10.2026",
+                                                        "city": "Уфа",
+                                                        "start_date": "2026-09-01",
+                                                        "end_date": "2026-05-31",
+                                                        "created_at": "2026-06-26T08:49:16.000000Z",
+                                                        "updated_at": "2026-06-26T08:49:16.000000Z",
+                                                        "is_active": false
+                                                    },
+                                                    {
+                                                        "id": 7,
+                                                        "name": "01.09.2026 - 31.10.2026",
+                                                        "city": "Уфа",
+                                                        "start_date": "2026-09-01",
+                                                        "end_date": "2026-10-31",
+                                                        "created_at": "2026-06-26T08:50:04.000000Z",
+                                                        "updated_at": "2026-06-26T08:50:04.000000Z",
+                                                        "is_active": true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "401": {
+                                "$ref": "#/components/responses/401Unauthorized"
+                            },
+                            "403": {
+                                "$ref": "#/components/responses/emailNotVerified"
+                            },
+                        }
+                    }
+                },
+                "/groups": {
+                    "get": {
+                        "summary": "Получение списка всех групп из города тимлида",
+                        "description": "Требует наличия токена в cookie, подтверждённого email и роли `teamlead`. " +
+                            "Возвращает массив всех существующих групп практик из города тимлида",
+                        "tags": ["Группы практик"],
+                        "responses": {
+                            "200": {
+                                "description": "Успешное получение списка групп.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "groups": {
+                                                    "type": "array",
+                                                    "description": "Массив групп практик",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": { "type": "integer", "description": "ID группы" },
+                                                            "name": { "type": "string", "description": "Название группы" },
+                                                            "city": { "type": "string", "description": "Город практики" },
+                                                            "start_date": { "type": "string", "format": "date", "description": "Дата начала" },
+                                                            "end_date": { "type": "string", "format": "date", "description": "Дата окончания" },
+                                                            "created_at": { "type": "string", "format": "date-time", "description": "Дата создания" },
+                                                            "updated_at": { "type": "string", "format": "date-time", "description": "Дата обновления" },
+                                                            "is_active": { "type": "boolean", "description": "Флаг активности группы" }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "example": {
+                                                "groups": [
+                                                    {
+                                                        "id": 6,
+                                                        "name": "01.09.2026 - 31.10.2026",
+                                                        "city": "Уфа",
+                                                        "start_date": "2026-09-01",
+                                                        "end_date": "2026-05-31",
+                                                        "created_at": "2026-06-26T08:49:16.000000Z",
+                                                        "updated_at": "2026-06-26T08:49:16.000000Z",
+                                                        "is_active": false
+                                                    },
+                                                    {
+                                                        "id": 7,
+                                                        "name": "01.09.2026 - 31.10.2026",
+                                                        "city": "Уфа",
+                                                        "start_date": "2026-09-01",
+                                                        "end_date": "2026-10-31",
+                                                        "created_at": "2026-06-26T08:50:04.000000Z",
+                                                        "updated_at": "2026-06-26T08:50:04.000000Z",
+                                                        "is_active": true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "401": {
+                                "$ref": "#/components/responses/401Unauthorized"
+                            },
+                            "403": {
+                                "description": "Не подтверждена почта/отсутствует роль teamlead",
+                                "content": {
+                                    "application/json": {
+                                        "examples": {
+                                            "unverifiedEmail": {
+                                                "summary": "Не подтверждена почта",
+                                                "value": {
+                                                    "message": "Почта не подтверждена"
+                                                }
+                                            },
+                                            "trySetNotCanceledStatusWithoutTeamleadRole": {
+                                                "summary": "Нет роли teamlead",
+                                                "value": {
+                                                    "message": "Доступ запрещён"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                        }
+                    }
                 }
             },
             "components": {
@@ -735,11 +906,32 @@
                         "description": "Нет токена в cookie/невалидный или устаревший токен",
                         "content": {
                             "application/json": {
-                                "example": {
-                                    "message": "Нет токена в cookie"
-                                },
+                                "examples": {
+                                    "tokenNotInTheCookie": {
+                                        "summary": "Нет токена в cookie",
+                                        "value": {
+                                            "message": "Нет токена в cookie"
+                                        }
+                                    },
+                                    "InvalidOrExpiredToken": {
+                                        "summary": "Невалидный или устаревший токен",
+                                        "value": {
+                                            "message": "Невалидный или устаревший токен"
+                                        }
+                                    }
+                                }
                             }
                         },
+                    },
+                    "emailNotVerified": {
+                        "description": "Почта не подтверждена",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Почта не подтверждена"
+                                }
+                            }
+                        }
                     }
                 },
                 "schemas": {
