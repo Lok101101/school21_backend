@@ -14,7 +14,7 @@ class UsersSeeder extends Seeder
     {
         User::create([
             'role_id' => 1,
-            'email' => 'student@gmail.com',
+            'email' => 'student1@gmail.com',
             'email_verified_at' => now(),
             'password' => 'Test12345'
         ]);
@@ -23,6 +23,34 @@ class UsersSeeder extends Seeder
             'role_id' => 2,
             'city' => 'Уфа',
             'email' => 'teamlead@gmail.com',
+            'email_verified_at' => now(),
+            'password' => 'Test12345'
+        ]);
+
+        User::create([
+            'role_id' => 1,
+            'email' => 'student2@gmail.com',
+            'email_verified_at' => now(),
+            'password' => 'Test12345'
+        ]);
+
+        User::create([
+            'role_id' => 1,
+            'email' => 'student3@gmail.com',
+            'email_verified_at' => now(),
+            'password' => 'Test12345'
+        ]);
+
+        User::create([
+            'role_id' => 1,
+            'email' => 'student4@gmail.com',
+            'email_verified_at' => now(),
+            'password' => 'Test12345'
+        ]);
+
+        User::create([
+            'role_id' => 1,
+            'email' => 'student5@gmail.com',
             'email_verified_at' => now(),
             'password' => 'Test12345'
         ]);

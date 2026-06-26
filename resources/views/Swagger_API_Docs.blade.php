@@ -42,8 +42,10 @@
                 "description": "<h4>Не забывайте в каждом запросе передавать заголовок Content-Type: application/json<br><br>" +
                     "Уже зарегистрированные аккаунты для тестирования:<br>" +
                     "С ролью student:<br> " +
-                    "email: student@gmail.com<br>" +
-                    "password: Test12345<br><br>" +
+                    "email: student1@gmail.com (почта уже подтверждена)<br>" +
+                    "password: Test12345<br>" +
+                    "Другие аккаунты с ролью student доступны на почтах student2@gmail.com, student3@gmail.com, " +
+                    "student4@gmail.com, student5@gmail.com (пароль везде тот же)<br><br>" +
                     "С ролью teamlead (город Уфа):<br>" +
                     "email: teamlead@gmail.com<br>" +
                     "password: Test12345</h4>"
