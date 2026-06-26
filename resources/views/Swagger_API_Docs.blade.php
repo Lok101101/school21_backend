@@ -44,7 +44,7 @@
                     "С ролью student:<br> " +
                     "email: student@gmail.com<br>" +
                     "password: Test12345<br><br>" +
-                    "С ролью teamlead:<br>" +
+                    "С ролью teamlead (город Уфа):<br>" +
                     "email: teamlead@gmail.com<br>" +
                     "password: Test12345</h4>"
             },

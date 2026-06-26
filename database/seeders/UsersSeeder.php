@@ -21,6 +21,7 @@ class UsersSeeder extends Seeder
 
         User::create([
             'role_id' => 2,
+            'city' => 'Уфа',
             'email' => 'teamlead@gmail.com',
             'email_verified_at' => now(),
             'password' => 'Test12345'
