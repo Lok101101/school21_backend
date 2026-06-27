@@ -906,6 +906,37 @@
                             },
                         }
                     }
+                },
+                "/users/me": {
+                    "get": {
+                        "summary": "Получение роли текущего пользователя",
+                        "description": "Требует наличия токена в cookie. Возвращает роль текущего авторизованного пользователя",
+                        "tags": ["Пользователи"],
+                        "responses": {
+                            "200": {
+                                "description": "Успешное получение роли",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "role": {
+                                                    "type": "string",
+                                                    "description": "Роль пользователя"
+                                                }
+                                            },
+                                            "example": {
+                                                "role": "student"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "401": {
+                                "$ref": "#/components/responses/401Unauthorized"
+                            }
+                        }
+                    }
                 }
             },
             "components": {

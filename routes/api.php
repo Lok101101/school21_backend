@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PracticeGroupController;
 use App\Http\Controllers\PracticeRequestController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmailController;
 
@@ -13,6 +14,10 @@ Route::middleware('cookieApiToken')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/email-verify-code', [EmailController::class, 'sendVerifyCode']);
     Route::post('/verify-email', [EmailController::class, 'verifyEmailByCode']);
+
+    Route::prefix('users')->group(function () {
+        Route::get('/me', [UserController::class, 'getUserRole']);
+    });
 
     Route::middleware('emailVerifiedForAPI')->group(function () {
         Route::prefix('requests')->group(function () {
