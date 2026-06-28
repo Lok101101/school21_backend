@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function getUserRole(Request $request) {
-        return response()->json(['role' => $request->user()->role->code]);
+    public function getUserInfo(Request $request) {
+        return response()->json(['id' => $request->user()->id, 'role' => $request->user()->role->code]);
     }
 }

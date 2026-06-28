@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_practice_groups', function (Blueprint $table) {
+        Schema::create('practice_group_messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('group_id')->constrained('practice_groups')->cascadeOnDelete();
-            $table->foreignId('request_id')->nullable()->constrained('practice_requests')->nullOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->text('text');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_practice_groups');
+        Schema::dropIfExists('practice_group_messages');
     }
 };

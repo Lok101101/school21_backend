@@ -907,25 +907,136 @@
                         }
                     }
                 },
+                "/groups/{id}/messages": {
+                    "post": {
+                        "summary": "Отправка сообщения в группу",
+                        "description": "Требует наличия токена в cookie, подтверждённого email и нахождение пользователя " +
+                            "в группе. Принимает текст сообщения от пользователя, ищет группу по параметру `id` из URL, " +
+                            "создаёт сообщение в базе и рассылает его всем участникам группы",
+                        "tags": ["Группы практик"],
+                        "security": [
+                            {
+                                "CookieAuth": []
+                            }
+                        ],
+                        "parameters": [
+                            {
+                                "name": "id",
+                                "in": "path",
+                                "required": true,
+                                "description": "Идентификатор группы, в которую будет отправлено сообщение",
+                            }
+                        ],
+                        "requestBody": {
+                            "required": true,
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "text": {
+                                                "type": "string",
+                                                "description": "Текст сообщения",
+                                            }
+                                        }
+                                    },
+                                    "example": {
+                                        "text": "Текст сообщения"
+                                    }
+                                }
+                            }
+                        },
+                        "responses": {
+                            "201": {
+                                "description": "Успешная отправка сообщения"
+                            },
+                            "401": {
+                                "$ref": "#/components/responses/401Unauthorized"
+                            },
+                            "403": {
+                                "description": "Почта не подтверждена/пользователь не состоит в этой группе",
+                                "content": {
+                                    "application/json": {
+                                        "examples": {
+                                            "unverifiedEmail": {
+                                                "summary": "Не подтверждена почта",
+                                                "value": {
+                                                    "message": "Почта не подтверждена"
+                                                }
+                                            },
+                                            "userIsNotMember": {
+                                                "summary": "Пользователь не состоит в этой группе",
+                                                "value": {
+                                                    "message": "Доступ запрещён"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Группа с указанным ID не найдена",
+                                "content": {
+                                    "application/json": {
+                                        "example": {
+                                            "message": "Такой группы не существует"
+                                        }
+                                    }
+                                }
+                            },
+                            "422": {
+                                "description": "Ошибка валидации/группа неактивна",
+                                "content": {
+                                    "application/json": {
+                                        "examples": {
+                                            "validationError": {
+                                                "summary": "Ошибка валидации",
+                                                "value": {
+                                                    "message": "Поле text обязательно.",
+                                                    "errors": {
+                                                        "text": [
+                                                            "Поле text обязательно."
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "groupIsInactive": {
+                                                "summary": "Группа неактивна",
+                                                "value": {
+                                                    "message": "Группа неактивна"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                        }
+                    }
+                },
                 "/users/me": {
                     "get": {
-                        "summary": "Получение роли текущего пользователя",
-                        "description": "Требует наличия токена в cookie. Возвращает роль текущего авторизованного пользователя",
+                        "summary": "Получение ID и роли пользователя",
+                        "description": "Требует наличия токена в cookie. Возвращает ID и роль текущего авторизованного пользователя",
                         "tags": ["Пользователи"],
                         "responses": {
                             "200": {
-                                "description": "Успешное получение роли",
+                                "description": "Успешное получение информации",
                                 "content": {
                                     "application/json": {
                                         "schema": {
                                             "type": "object",
                                             "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "description": "Идентификатор пользователя"
+                                                },
                                                 "role": {
                                                     "type": "string",
                                                     "description": "Роль пользователя"
                                                 }
                                             },
                                             "example": {
+                                                "id": 6,
                                                 "role": "student"
                                             }
                                         }

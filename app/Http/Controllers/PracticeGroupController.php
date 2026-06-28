@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSentEvent;
+use App\Http\Requests\SendGroupMessageRequest;
 use App\Models\PracticeGroup;
+use App\Models\PracticeGroupMessage;
+use App\Models\UserPracticeGroup;
 use Illuminate\Http\Request;
 
 class PracticeGroupController extends Controller
@@ -26,5 +30,41 @@ class PracticeGroupController extends Controller
             $practiceGroup->is_active = $practiceGroup->end_date->gt(now());
         }
         return response()->json(['groups' => $practiceGroups], 200);
+    }
+
+    public function sendMessage(SendGroupMessageRequest $request, $id) {
+        $group = PracticeGroup::where('id', $id)->first();
+        if (!$group) {
+            return response()->json(['message' => 'Такой группы не существует'], 404);
+        }
+
+        $user = $request->user();
+
+        if (!$group->hasUser($user)) {
+            return response()->json(['message' => 'Доступ запрещён'], 403);
+        }
+
+        if (!$group->isActive()) {
+            return response()->json(['message' => 'Группа неактивна'], 422);
+        }
+
+        PracticeGroupMessage::create([
+            'user_id' => $request->user()->id,
+            'group_id' => $group->id,
+            'text' => $request->text
+        ]);
+
+        $practiceRequest = UserPracticeGroup::where(['user_id' => $user->id, 'group_id' => $group->id])
+            ->first()
+            ->request;
+        $senderInfo = collect($practiceRequest->only('name', 'surname', 'patronymic'))
+            ->put('id', $user->id);
+        event(new MessageSentEvent(
+            $group->id,
+            $request->text,
+            $senderInfo
+        ));
+
+        return response()->json([''], 201);
     }
 }

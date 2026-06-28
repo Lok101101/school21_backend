@@ -16,7 +16,7 @@ Route::middleware('cookieApiToken')->group(function () {
     Route::post('/verify-email', [EmailController::class, 'verifyEmailByCode']);
 
     Route::prefix('users')->group(function () {
-        Route::get('/me', [UserController::class, 'getUserRole']);
+        Route::get('/me', [UserController::class, 'getUserInfo']);
     });
 
     Route::middleware('emailVerifiedForAPI')->group(function () {
@@ -30,6 +30,7 @@ Route::middleware('cookieApiToken')->group(function () {
         Route::prefix('groups')->group(function () {
             Route::get('/my', [PracticeGroupController::class, 'getUserGroups']);
             Route::get('', [PracticeGroupController::class, 'getAllGroups'])->middleware('role:teamlead');
+            Route::post('/{id}/messages', [PracticeGroupController::class, 'sendMessage']);
         });
     });
 });

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreatePracticeRequest;
-use App\Http\Requests\GetByCityPracticeRequest;
 use App\Http\Requests\UpdatePracticeRequestStatus;
 use App\Models\PracticeGroup;
 use App\Models\PracticeRequest;
@@ -100,7 +99,8 @@ class PracticeRequestController extends Controller
 
             UserPracticeGroup::create([
                 'user_id' => $practiceRequest->user_id,
-                'group_id' => $group->id
+                'group_id' => $group->id,
+                'request_id' => $practiceRequest->id
             ]);
         }
 
