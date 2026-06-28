@@ -15,19 +15,8 @@ class AuthController extends Controller
         $user = User::query()->create([...$request->validated(), 'role_id' => Role::where('code', 'student')->value('id')]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
-        $cookie = cookie(
-            'auth_token',
-            $token,
-            43200,
-            '/',
-            null,
-            true,
-            true,
-            false,
-            'Lax'
-        );
 
-        return response('', 201)->withCookie($cookie);
+        return response()->json(['auth_token' => $token], 201);
     }
 
     public function login(LoginRequest $request) {
@@ -41,26 +30,14 @@ class AuthController extends Controller
 
         $user = Auth::user();
         $token = $user->createToken('auth_token')->plainTextToken;
-        $cookie = cookie(
-            'auth_token',
-            $token,
-            43200,
-            '/',
-            null,
-            true,
-            true,
-            false,
-            'Lax'
-        );
 
-        return response('', 201)->withCookie($cookie);
+        return response()->json(['auth_token' => $token], 201);
     }
 
     public function logout(Request $request) {
         $user = $request->user();
         $user->currentAccessToken()->delete();
 
-        return response()->json([
-        ], 200)->withoutCookie('auth_token');
+        return response()->json([], 200);
     }
 }
