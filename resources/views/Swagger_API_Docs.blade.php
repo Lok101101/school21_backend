@@ -921,7 +921,7 @@
                     "get": {
                         "summary": "Получение списка участников группы",
                         "description": "Требует авторизации и подтверждённого email. Возвращает список всех участников указанной в параметре `id` группы. " +
-                            "Тимлид может просматривать участников любой группы своего города. Студент может просматривать участников " +
+                            "Тимлид может получать участников любой группы своего города. Студент может получать участников " +
                             "только той группы, в которой он состоит.",
                         "tags": ["Группы практик"],
                         "security": [
@@ -1019,6 +1019,124 @@
                     }
                 },
                 "/groups/{id}/messages": {
+                    "get": {
+                        "summary": "Получение истории сообщений группы",
+                        "description": "Требует авторизации и подтверждённого email. Возвращает массив сообщений указанной в " +
+                            "параметре `id` группы с данными об отправителях. " +
+                            "Тимлид может получать сообщения любой группы своего города. Студент может получать сообщения " +
+                            "только той группы, в которой он состоит.",
+                        "tags": ["Группы практик"],
+                        "security": [
+                            {
+                                "BearerAuth": []
+                            }
+                        ],
+                        "parameters": [
+                            {
+                                "name": "id",
+                                "in": "path",
+                                "required": true,
+                                "description": "Идентификатор группы",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Успешное получение списка сообщений.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "group_messages": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": { "type": "integer", "description": "ID сообщения" },
+                                                            "text": { "type": "string", "description": "Текст сообщения" },
+                                                            "created_at": { "type": "string", "format": "date-time", "description": "Дата и время отправки" },
+                                                            "senderInfo": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "id": { "type": "integer", "description": "ID отправителя" },
+                                                                    "name": { "type": "string", "description": "Имя" },
+                                                                    "surname": { "type": "string", "description": "Фамилия" },
+                                                                    "patronymic": { "type": "string", "description": "Отчество" }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "example": {
+                                            "group_messages": [
+                                                {
+                                                    "id": 1,
+                                                    "text": "Привет всем!",
+                                                    "created_at": "2026-06-28T10:00:00.000000Z",
+                                                    "senderInfo": {
+                                                        "id": 12,
+                                                        "name": "Иван",
+                                                        "surname": "Иванов",
+                                                        "patronymic": "Иванович"
+                                                    }
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "text": "Как успехи с практикой?",
+                                                    "created_at": "2026-06-28T10:05:00.000000Z",
+                                                    "senderInfo": {
+                                                        "id": 5,
+                                                        "name": "Тимлид",
+                                                        "surname": "Тимлид",
+                                                        "patronymic": "Тимлид"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "401": {
+                                "$ref": "#/components/responses/401Unauthorized"
+                            },
+                            "403": {
+                                "description": "Доступ запрещён (не подтверждена почта / пользователь не в группе / тимлид другого города)",
+                                "content": {
+                                    "application/json": {
+                                        "examples": {
+                                            "unverifiedEmail": {
+                                                "summary": "Не подтверждена почта",
+                                                "value": {
+                                                    "message": "Почта не подтверждена"
+                                                }
+                                            },
+                                            "accessDenied": {
+                                                "summary": "Доступ запрещён",
+                                                "value": {
+                                                    "message": "Доступ запрещён"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Группа не найдена",
+                                "content": {
+                                    "application/json": {
+                                        "example": {
+                                            "message": "Такой группы не существует"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "post": {
                         "summary": "Отправка сообщения в группу",
                         "description": "Требует авторизации, подтверждённого email и нахождение пользователя " +

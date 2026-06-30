@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/my', [PracticeGroupController::class, 'getUserGroups']);
             Route::get('', [PracticeGroupController::class, 'getAllGroups'])->middleware('role:teamlead');
             Route::get('/{id}/members', [PracticeGroupController::class, 'getGroupMembers']);
+            Route::get('/{id}/messages', [PracticeGroupController::class, 'getGroupMessages']);
             Route::post('/{id}/messages', [PracticeGroupController::class, 'sendMessage']);
         });
     });

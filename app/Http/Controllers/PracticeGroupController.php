@@ -109,4 +109,52 @@ class PracticeGroupController extends Controller
 
         return response()->json(['group_members' => $members], 200);
     }
+
+    public function getGroupMessages(Request $request, $id) {
+        $group = PracticeGroup::find($id);
+        $user = $request->user();
+
+        if (!$group) {
+            return response()->json(['message' => 'Такой группы не существует'], 404);
+        }
+
+        $isTeamleadFromGroupCity = ($user->role->code === 'teamlead' && $user->city === $group->city);
+        if (!$isTeamleadFromGroupCity && !$group->hasUser($user)) {
+            return response()->json(['message' => 'Доступ запрещён'], 403);
+        }
+
+        $groupMessages = $group->messages()
+            ->latest()
+            ->get()
+            ->map(function ($message) use ($id) {
+                $memberInfo = UserPracticeGroup::where(['user_id' => $message->user_id, 'group_id' => $id])
+                    ->with('request:id,name,surname,patronymic')
+                    ->first();
+
+                if ($memberInfo && $memberInfo->request) {
+                    $senderInfo = [
+                        'id' => $message->user_id,
+                        'name' => $memberInfo->request->name,
+                        'surname' => $memberInfo->request->surname,
+                        'patronymic' => $memberInfo->request->patronymic,
+                    ];
+                } else {
+                    $senderInfo = [
+                        'id' => $message->user_id,
+                        'name' => 'Тимлид',
+                        'surname' => 'Тимлид',
+                        'patronymic' => 'Тимлид',
+                    ];
+                }
+
+                return [
+                    'id' => $message->id,
+                    'text' => $message->text,
+                    'created_at' => $message->created_at,
+                    'senderInfo' => $senderInfo
+                ];
+            });
+
+        return response()->json(['group_messages' => $groupMessages], 200);
+    }
 }
