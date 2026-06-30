@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PracticeRequestStatusChangeEvent;
 use App\Http\Requests\CreatePracticeRequest;
 use App\Http\Requests\UpdatePracticeRequestStatus;
 use App\Models\PracticeGroup;
@@ -9,6 +10,7 @@ use App\Models\PracticeRequest;
 use App\Models\PracticeRequestStatus;
 use App\Models\UserPracticeGroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PracticeRequestController extends Controller
 {
@@ -70,9 +72,9 @@ class PracticeRequestController extends Controller
             return response()->json(['message' => 'Такой заявки не существует'], 404);
         }
 
-        if ($practiceRequest->status->code !== 'pending' && $request->new_status === 'canceled') {
+        if ($practiceRequest->status->code !== 'pending') {
             return response()->json([
-                'message' => 'Установить статус canceled можно только на заявку со статусом pending'
+                'message' => 'Изменить статус можно только у заявки со статусом pending'
             ], 422);
         }
 
@@ -102,6 +104,23 @@ class PracticeRequestController extends Controller
                 'group_id' => $group->id,
                 'request_id' => $practiceRequest->id
             ]);
+        }
+
+        if ($newStatus->code === 'accepted' || $newStatus->code === 'rejected') {
+            event(new PracticeRequestStatusChangeEvent(
+                $practiceRequest->user_id,
+                $practiceRequest->id,
+                $newStatus->code,
+                $newStatus->name,
+                "Статус вашей заявки на практику №{$practiceRequest->id} изменился на $newStatus->name"
+            ));
+
+            Mail::html(
+                "<h1>Здравствуйте, {$practiceRequest->name} {$practiceRequest->surname} {$practiceRequest->patronymic}!
+                Статус заявки №{$practiceRequest->id} на практику изменился на: {$newStatus->name}</h1>",
+                function ($message) use ($practiceRequest) {
+                $message->to($practiceRequest->user->email)->subject('Статус вашей заявки на практику изменился | Школа 21');
+            });
         }
 
         $newStatus->setAttribute('change_reason', $request->reason);

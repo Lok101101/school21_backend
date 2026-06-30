@@ -15,6 +15,10 @@ class PracticeRequest extends Model
         return $this->belongsTo(PracticeRequestStatus::class, 'status_id');
     }
 
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     protected function casts(): array
     {
         return [

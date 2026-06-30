@@ -13,3 +13,7 @@ Broadcast::channel('Group.{group}', function (User $user, PracticeGroup $group) 
 
     return $group->hasUser($user);
 });
+
+Broadcast::channel('Notifications.{userID}', function (User $user, int $userID) {
+    return (int) $user->id === $userID;
+});
