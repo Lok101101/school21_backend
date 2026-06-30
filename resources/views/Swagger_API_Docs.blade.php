@@ -917,6 +917,107 @@
                         }
                     }
                 },
+                "/groups/{id}/members": {
+                    "get": {
+                        "summary": "Получение списка участников группы",
+                        "description": "Требует авторизации и подтверждённого email. Возвращает список всех участников указанной в параметре `id` группы. " +
+                            "Тимлид может просматривать участников любой группы своего города. Студент может просматривать участников " +
+                            "только той группы, в которой он состоит.",
+                        "tags": ["Группы практик"],
+                        "security": [
+                            {
+                                "BearerAuth": []
+                            }
+                        ],
+                        "parameters": [
+                            {
+                                "name": "id",
+                                "in": "path",
+                                "required": true,
+                                "description": "Идентификатор группы",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Успешное получение списка участников.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "group_members": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": { "type": "integer", "description": "ID пользователя" },
+                                                            "name": { "type": "string", "description": "Имя студента" },
+                                                            "surname": { "type": "string", "description": "Фамилия студента" },
+                                                            "patronymic": { "type": "string", "description": "Отчество студента" }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "example": {
+                                            "group_members": [
+                                                {
+                                                    "id": 12,
+                                                    "name": "Иван",
+                                                    "surname": "Иванов",
+                                                    "patronymic": "Иванович"
+                                                },
+                                                {
+                                                    "id": 15,
+                                                    "name": "Петр",
+                                                    "surname": "Петров",
+                                                    "patronymic": "Петрович"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "401": {
+                                "$ref": "#/components/responses/401Unauthorized"
+                            },
+                            "403": {
+                                "description": "Доступ запрещён (не подтверждена почта / пользователь не в группе / тимлид другого города)",
+                                "content": {
+                                    "application/json": {
+                                        "examples": {
+                                            "unverifiedEmail": {
+                                                "summary": "Не подтверждена почта",
+                                                "value": {
+                                                    "message": "Почта не подтверждена"
+                                                }
+                                            },
+                                            "accessDenied": {
+                                                "summary": "Доступ запрещён",
+                                                "value": {
+                                                    "message": "Доступ запрещён"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Группа не найдена",
+                                "content": {
+                                    "application/json": {
+                                        "example": {
+                                            "message": "Такой группы не существует"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "/groups/{id}/messages": {
                     "post": {
                         "summary": "Отправка сообщения в группу",

@@ -78,4 +78,35 @@ class PracticeGroupController extends Controller
 
         return response()->json([''], 201);
     }
+
+    public function getGroupMembers(Request $request, $id) {
+        $group = PracticeGroup::find($id);
+        $user = $request->user();
+
+        if (!$group) {
+            return response()->json(['message' => 'Такой группы не существует'], 404);
+        }
+
+        $isTeamleadFromGroupCity = ($user->role->code === 'teamlead' && $user->city === $group->city);
+        if (!$isTeamleadFromGroupCity && !$group->hasUser($user)) {
+            return response()->json(['message' => 'Доступ запрещён'], 403);
+        }
+
+        $members = UserPracticeGroup::where('group_id', $id)
+            ->with([
+                'user:id',
+                'request:id,name,surname,patronymic'
+            ])
+            ->get()
+            ->map(function ($pivot) {
+                return [
+                    'id' => $pivot->user_id,
+                    'name' => $pivot->request->name,
+                    'surname' => $pivot->request->surname,
+                    'patronymic' => $pivot->request->patronymic,
+                ];
+            });
+
+        return response()->json(['group_members' => $members], 200);
+    }
 }

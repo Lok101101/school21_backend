@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('groups')->group(function () {
             Route::get('/my', [PracticeGroupController::class, 'getUserGroups']);
             Route::get('', [PracticeGroupController::class, 'getAllGroups'])->middleware('role:teamlead');
+            Route::get('/{id}/members', [PracticeGroupController::class, 'getGroupMembers']);
             Route::post('/{id}/messages', [PracticeGroupController::class, 'sendMessage']);
         });
     });

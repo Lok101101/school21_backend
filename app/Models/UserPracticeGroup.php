@@ -12,4 +12,8 @@ class UserPracticeGroup extends Model
     public function request(): BelongsTo {
         return $this->belongsTo(PracticeRequest::class);
     }
+
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class);
+    }
 }
