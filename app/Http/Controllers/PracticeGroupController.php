@@ -40,7 +40,8 @@ class PracticeGroupController extends Controller
 
         $user = $request->user();
 
-        if (!$group->hasUser($user)) {
+        $isTeamleadFromGroupCity = ($user->role->code === 'teamlead' && $user->city === $group->city);
+        if (!$isTeamleadFromGroupCity && !$group->hasUser($user)) {
             return response()->json(['message' => 'Доступ запрещён'], 403);
         }
 
@@ -54,11 +55,21 @@ class PracticeGroupController extends Controller
             'text' => $request->text
         ]);
 
-        $practiceRequest = UserPracticeGroup::where(['user_id' => $user->id, 'group_id' => $group->id])
-            ->first()
-            ->request;
-        $senderInfo = collect($practiceRequest->only('name', 'surname', 'patronymic'))
-            ->put('id', $user->id);
+        if ($user->role->code !== 'teamlead') {
+            $practiceRequest = UserPracticeGroup::where(['user_id' => $user->id, 'group_id' => $group->id])
+                ->first()
+                ->request;
+            $senderInfo = collect($practiceRequest->only('name', 'surname', 'patronymic'))
+                ->put('id', $user->id);
+        }
+        else {
+            $senderInfo = fluent([
+                'id' => $user->id,
+                'name' => 'Тимлид',
+                'surname' => 'Тимлид',
+                'patronymic' => 'Тимлид'
+            ]);
+        }
         event(new MessageSentEvent(
             $group->id,
             $request->text,
