@@ -27,6 +27,8 @@ class CreatePracticeRequest extends FormRequest
             'surname' => 'required|string|max:255',
             'patronymic' => 'nullable|string|max:255',
             'city' => 'required|string|max:50',
+            'phone' => 'required|string|max:50',
+            'birth_date' => 'required|date_format:Y-m-d|before:today',
             'specialization' => 'required|string|max:255',
             'course' => 'required|integer|between:1,10',
             'start_date' => 'required|date_format:Y-m-d|after_or_equal:today',

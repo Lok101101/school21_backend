@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('surname');
             $table->string('patronymic')->nullable();
+            $table->string('city');
+            $table->string('phone');
+            $table->date('birth_date');
             $table->string('specialization');
             $table->tinyInteger('course');
             $table->date('start_date');

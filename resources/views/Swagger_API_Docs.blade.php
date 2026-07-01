@@ -384,6 +384,8 @@
                                         "surname": "Иванов",
                                         "patronymic": "Иванович",
                                         "city": "Уфа",
+                                        "phone": "79990000000",
+                                        "birth_date": "2006-05-04",
                                         "specialization": "Информационные системы",
                                         "course": 3,
                                         "start_date": "2026-07-01",
@@ -418,6 +420,15 @@
                                                         "city": {
                                                             "type": "string",
                                                             "example": "Уфа"
+                                                        },
+                                                        "phone": {
+                                                            "type": "string",
+                                                            "example": "79990000000"
+                                                        },
+                                                        "birth_date": {
+                                                            "type": "string",
+                                                            "format": "date",
+                                                            "example": "2006-05-04"
                                                         },
                                                         "specialization": {
                                                             "type": "string",
@@ -486,8 +497,7 @@
                                 }
                             },
                             "422": {
-                                "description": "Ошибка валидации данных/Есть активная практика/Есть заявка на рассмотрении/" +
-                                    "Подано уже 3 заявки за неделю",
+                                "description": "Ошибка валидации данных / Есть активная практика / Есть заявка на рассмотрении / Подано уже 3 заявки за неделю",
                                 "content": {
                                     "application/json": {
                                         "examples": {
@@ -551,6 +561,8 @@
                                                     "surname": "Иванов",
                                                     "patronymic": "Иванович",
                                                     "city": "Уфа",
+                                                    "phone": "79990000000",
+                                                    "birth_date": "2006-05-04",
                                                     "specialization": "Backend Web Developer",
                                                     "course": 3,
                                                     "start_date": "2026-09-01",
@@ -569,6 +581,8 @@
                                                     "surname": "Иванов",
                                                     "patronymic": "Иванович",
                                                     "city": "Уфа",
+                                                    "phone": "79990000000",
+                                                    "birth_date": "2006-05-04",
                                                     "specialization": "Backend Web Developer",
                                                     "course": 3,
                                                     "start_date": "2026-09-01",
@@ -1375,7 +1389,7 @@
                     },
                     "CreatePracticeRequest": {
                         "type": "object",
-                        "required": ["name", "surname", "specialization", "course", "start_date", "end_date"],
+                        "required": ["name", "surname", "city", "phone", "birth_date", "specialization", "course", "start_date", "end_date"],
                         "properties": {
                             "name": {
                                 "type": "string",
@@ -1391,6 +1405,21 @@
                                 "type": "string",
                                 "maxLength": 255,
                                 "description": "Отчество студента (если имеется)."
+                            },
+                            "city": {
+                                "type": "string",
+                                "maxLength": 50,
+                                "description": "Город, в котором планируется практика."
+                            },
+                            "phone": {
+                                "type": "string",
+                                "maxLength": 50,
+                                "description": "Контактный номер телефона."
+                            },
+                            "birth_date": {
+                                "type": "string",
+                                "format": "date",
+                                "description": "Дата рождения студента. Формат: `ГГГГ-ММ-ДД`. Должна быть в прошлом."
                             },
                             "specialization": {
                                 "type": "string",
@@ -1450,6 +1479,15 @@
                             "city": {
                                 "type": "string",
                                 "example": "Уфа"
+                            },
+                            "phone": {
+                                "type": "string",
+                                "example": "79990000000"
+                            },
+                            "birth_date": {
+                                "type": "string",
+                                "format": "date",
+                                "example": "2006-05-04"
                             },
                             "specialization": {
                                 "type": "string",
