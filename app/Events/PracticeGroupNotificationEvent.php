@@ -9,23 +9,22 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSentEvent implements ShouldBroadcast
+class PracticeGroupNotificationEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
+    public int $groupID;
+    public string $subject;
+    public string $text;
 
-    public string $groupID;
-    public string $message;
-    public $senderInfo;
-
-    public function __construct(string $groupID, string $message, $senderInfo)
+    public function __construct(int $groupID, string $subject, $text)
     {
         $this->groupID = $groupID;
-        $this->message = $message;
-        $this->senderInfo = $senderInfo;
+        $this->subject = $subject;
+        $this->text = $text;
     }
 
     /**

@@ -32,7 +32,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('', [PracticeGroupController::class, 'getAllGroups'])->middleware('role:teamlead');
             Route::get('/{id}/members', [PracticeGroupController::class, 'getGroupMembers']);
             Route::get('/{id}/messages', [PracticeGroupController::class, 'getGroupMessages']);
+            Route::get('/{id}/notifications', [PracticeGroupController::class, 'getGroupNotifications']);
             Route::post('/{id}/messages', [PracticeGroupController::class, 'sendMessage']);
+            Route::post('/{id}/notifications', [PracticeGroupController::class, 'sendNotificationToGroup'])->middleware('role:teamlead');
         });
     });
 });

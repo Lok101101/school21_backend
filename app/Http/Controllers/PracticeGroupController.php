@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessageSentEvent;
+use App\Events\PracticeGroupNotificationEvent;
 use App\Http\Requests\SendGroupMessageRequest;
+use App\Http\Requests\SendNotificationToGroupRequest;
 use App\Models\PracticeGroup;
 use App\Models\PracticeGroupMessage;
+use App\Models\PracticeGroupNotification;
 use App\Models\UserPracticeGroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PracticeGroupController extends Controller
 {
@@ -152,5 +156,49 @@ class PracticeGroupController extends Controller
             });
 
         return response()->json(['group_messages' => $groupMessages], 200);
+    }
+
+    public function sendNotificationToGroup(SendNotificationToGroupRequest $request, $id) {
+        $group = PracticeGroup::find($id);
+        $user = $request->user();
+
+        if (!$group) {
+            return response()->json(['message' => 'Такой группы не существует'], 404);
+        }
+
+        if ($user->city !== $group->city) {
+            return response()->json(['message' => 'Доступ запрещён'], 403);
+        }
+
+        PracticeGroupNotification::create([...$request->validated(), 'group_id' => $group->id]);
+
+        event(new PracticeGroupNotificationEvent($group->id, $request->subject, $request->text));
+
+        $members = $group->users;
+        foreach ($members as $member) {
+            Mail::html(
+                $request->text,
+                function ($message) use ($member, $request) {
+                    $message->to($member->email)->subject("{$request->subject} | Школа 21");
+                });
+        }
+
+        return response()->json('', 201);
+    }
+
+    public function getGroupNotifications(Request $request, $id) {
+        $group = PracticeGroup::find($id);
+        $user = $request->user();
+
+        if (!$group) {
+            return response()->json(['message' => 'Такой группы не существует'], 404);
+        }
+
+        $isTeamleadFromGroupCity = ($user->role->code === 'teamlead' && $user->city === $group->city);
+        if (!$isTeamleadFromGroupCity && !$group->hasUser($user)) {
+            return response()->json(['message' => 'Доступ запрещён'], 403);
+        }
+
+        return response()->json(['group_notifications' => $group->notifications->makeHidden('group_id')], 200);
     }
 }

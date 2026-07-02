@@ -1284,6 +1284,198 @@
                         }
                     }
                 },
+                "/groups/{id}/notifications": {
+                    "get": {
+                        "summary": "Получение истории уведомлений группы",
+                        "description": "Требует авторизации и подтверждённого email. Возвращает массив уведомлений указанной в " +
+                            "параметре `id` группы. " +
+                            "Тимлид может получать уведомления любой группы своего города. Студент может получать уведомления " +
+                            "только той группы, в которой он состоит.",
+                        "tags": ["Группы практик"],
+                        "security": [
+                            {
+                                "BearerAuth": []
+                            }
+                        ],
+                        "parameters": [
+                            {
+                                "name": "id",
+                                "in": "path",
+                                "required": true,
+                                "description": "Идентификатор группы",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Успешное получение списка уведомлений.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "group_notifications": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": { "type": "integer", "description": "ID уведомления" },
+                                                            "subject": { "type": "string", "description": "Тема уведомления" },
+                                                            "text": { "type": "string", "description": "Текст уведомления" },
+                                                            "created_at": { "type": "string", "format": "date-time", "description": "Дата и время создания" },
+                                                            "updated_at": { "type": "string", "format": "date-time", "description": "Дата и время обновления" }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "example": {
+                                            "group_notifications": [
+                                                {
+                                                    "id": 1,
+                                                    "subject": "Важное уведомление",
+                                                    "text": "Текст уведомления для участников группы",
+                                                    "created_at": "2026-06-28T10:00:00.000000Z",
+                                                    "updated_at": "2026-06-28T10:00:00.000000Z"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "401": {
+                                "$ref": "#/components/responses/401Unauthorized"
+                            },
+                            "403": {
+                                "description": "Доступ запрещён (не подтверждена почта / пользователь не в группе / тимлид другого города)",
+                                "content": {
+                                    "application/json": {
+                                        "examples": {
+                                            "unverifiedEmail": {
+                                                "summary": "Не подтверждена почта",
+                                                "value": {
+                                                    "message": "Почта не подтверждена"
+                                                }
+                                            },
+                                            "accessDenied": {
+                                                "summary": "Доступ запрещён",
+                                                "value": {
+                                                    "message": "Доступ запрещён"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Группа не найдена",
+                                "content": {
+                                    "application/json": {
+                                        "example": {
+                                            "message": "Такой группы не существует"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "post": {
+                        "summary": "Отправка уведомления в группу",
+                        "description": "Требует авторизации, подтверждённого email и роли `teamlead`. " +
+                            "Принимает тему и текст уведомления, ищет группу по параметру `id` из URL, " +
+                            "создаёт уведомление в базе и рассылает его всем участникам группы по email и через вебсокеты",
+                        "tags": ["Группы практик"],
+                        "security": [
+                            {
+                                "BearerAuth": []
+                            }
+                        ],
+                        "parameters": [
+                            {
+                                "name": "id",
+                                "in": "path",
+                                "required": true,
+                                "description": "Идентификатор группы, в которую будет отправлено уведомление",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        ],
+                        "requestBody": {
+                            "required": true,
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/SendNotificationToGroup"
+                                    },
+                                    "example": {
+                                        "subject": "Важное уведомление",
+                                        "text": "Текст уведомления для участников группы"
+                                    }
+                                }
+                            }
+                        },
+                        "responses": {
+                            "201": {
+                                "description": "Успешная отправка уведомления"
+                            },
+                            "401": {
+                                "$ref": "#/components/responses/401Unauthorized"
+                            },
+                            "403": {
+                                "description": "Доступ запрещён (не подтверждена почта / нет роли тимлида / тимлид другого города)",
+                                "content": {
+                                    "application/json": {
+                                        "examples": {
+                                            "unverifiedEmail": {
+                                                "summary": "Не подтверждена почта",
+                                                "value": {
+                                                    "message": "Почта не подтверждена"
+                                                }
+                                            },
+                                            "accessDenied": {
+                                                "summary": "Доступ запрещён",
+                                                "value": {
+                                                    "message": "Доступ запрещён"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Группа с указанным ID не найдена",
+                                "content": {
+                                    "application/json": {
+                                        "example": {
+                                            "message": "Такой группы не существует"
+                                        }
+                                    }
+                                }
+                            },
+                            "422": {
+                                "description": "Ошибка валидации",
+                                "content": {
+                                    "application/json": {
+                                        "example": {
+                                            "message": "Поле subject обязательно.",
+                                            "errors": {
+                                                "subject": [
+                                                    "Поле subject обязательно."
+                                                ],
+                                                "text": [
+                                                    "Поле text обязательно."
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "/users/me": {
                     "get": {
                         "summary": "Получение ID и роли пользователя",
@@ -1570,6 +1762,22 @@
                             }
                         },
                         "description": "Объект заявки на практику."
+                    },
+                    "SendNotificationToGroup": {
+                        "type": "object",
+                        "required": ["subject", "text"],
+                        "properties": {
+                            "subject": {
+                                "type": "string",
+                                "maxLength": 255,
+                                "description": "Тема уведомления"
+                            },
+                            "text": {
+                                "type": "string",
+                                "maxLength": 10000,
+                                "description": "Текст уведомления"
+                            }
+                        }
                     }
                 }
             }

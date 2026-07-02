@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'city', 'start_date', 'end_date'])]
@@ -19,6 +20,15 @@ class PracticeGroup extends Model
 
     public function messages(): HasMany {
         return $this->hasMany(PracticeGroupMessage::class, 'group_id');
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_practice_groups', 'group_id', 'user_id');
+    }
+
+    public function notifications(): HasMany {
+        return $this->hasMany(PracticeGroupNotification::class, 'group_id');
     }
 
     protected function casts(): array
