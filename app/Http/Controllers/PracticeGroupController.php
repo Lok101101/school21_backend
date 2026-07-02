@@ -94,17 +94,13 @@ class PracticeGroupController extends Controller
 
         $members = UserPracticeGroup::where('group_id', $id)
             ->with([
-                'user:id',
-                'request:id,name,surname,patronymic'
+                'request'
             ])
             ->get()
-            ->map(function ($pivot) {
-                return [
-                    'id' => $pivot->user_id,
-                    'name' => $pivot->request->name,
-                    'surname' => $pivot->request->surname,
-                    'patronymic' => $pivot->request->patronymic,
-                ];
+            ->map(function ($pivot) use ($user) {
+                if ($user->role->code !== 'teamlead') $pivot->request->makeHidden('phone', 'birth_date');
+
+                return $pivot->request->makeHidden('id', 'status_change_reason', 'created_at', 'updated_at')->toArray();
             });
 
         return response()->json(['group_members' => $members], 200);

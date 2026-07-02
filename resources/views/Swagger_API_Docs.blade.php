@@ -934,8 +934,9 @@
                     "get": {
                         "summary": "Получение списка участников группы",
                         "description": "Требует авторизации и подтверждённого email. Возвращает список всех участников указанной в параметре `id` группы. " +
-                            "Тимлид может получать участников любой группы своего города. Студент может получать участников " +
-                            "только той группы, в которой он состоит.",
+                            "Тимлид может получать участников любой группы своего города. Студент может получать участников только той группы, в которой " +
+                            "он состоит. Тимлид получает полную информацию об участниках группы, студент же получает ограниченную информацию " +
+                            "(без телефона и даты рождения)",
                         "tags": ["Группы практик"],
                         "security": [
                             {
@@ -966,30 +967,58 @@
                                                     "items": {
                                                         "type": "object",
                                                         "properties": {
-                                                            "id": { "type": "integer", "description": "ID пользователя" },
-                                                            "name": { "type": "string", "description": "Имя студента" },
-                                                            "surname": { "type": "string", "description": "Фамилия студента" },
-                                                            "patronymic": { "type": "string", "description": "Отчество студента" }
+                                                            "name": { "type": "string", "example": "Иван" },
+                                                            "surname": { "type": "string", "example": "Иванов" },
+                                                            "patronymic": { "type": "string", "example": "Иванович" },
+                                                            "city": { "type": "string", "example": "Уфа" },
+                                                            "phone": { "type": "string", "example": "79990000000", "description": "Только для тимлида" },
+                                                            "birth_date": { "type": "string", "format": "date", "example": "2006-05-04", "description": "Только для тимлида" },
+                                                            "specialization": { "type": "string", "example": "Информационные системы" },
+                                                            "course": { "type": "integer", "example": 3 },
+                                                            "start_date": { "type": "string", "format": "date", "example": "2026-07-01" },
+                                                            "end_date": { "type": "string", "format": "date", "example": "2026-08-31" }
                                                         }
                                                     }
                                                 }
                                             }
                                         },
-                                        "example": {
-                                            "group_members": [
-                                                {
-                                                    "id": 12,
-                                                    "name": "Иван",
-                                                    "surname": "Иванов",
-                                                    "patronymic": "Иванович"
-                                                },
-                                                {
-                                                    "id": 15,
-                                                    "name": "Петр",
-                                                    "surname": "Петров",
-                                                    "patronymic": "Петрович"
+                                        "examples": {
+                                            "teamleadView": {
+                                                "summary": "Для тимлида (полные данные)",
+                                                "value": {
+                                                    "group_members": [
+                                                        {
+                                                            "name": "Иван",
+                                                            "surname": "Иванов",
+                                                            "patronymic": "Иванович",
+                                                            "city": "Уфа",
+                                                            "phone": "79990000000",
+                                                            "birth_date": "2006-05-04",
+                                                            "specialization": "Информационные системы",
+                                                            "course": 3,
+                                                            "start_date": "2026-07-01",
+                                                            "end_date": "2026-08-31"
+                                                        }
+                                                    ]
                                                 }
-                                            ]
+                                            },
+                                            "studentView": {
+                                                "summary": "Для студента (скрыты телефон и дата рождения)",
+                                                "value": {
+                                                    "group_members": [
+                                                        {
+                                                            "name": "Иван",
+                                                            "surname": "Иванов",
+                                                            "patronymic": "Иванович",
+                                                            "city": "Уфа",
+                                                            "specialization": "Информационные системы",
+                                                            "course": 3,
+                                                            "start_date": "2026-07-01",
+                                                            "end_date": "2026-08-31"
+                                                        }
+                                                    ]
+                                                }
+                                            }
                                         }
                                     }
                                 }
