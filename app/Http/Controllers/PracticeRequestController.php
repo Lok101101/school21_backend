@@ -125,7 +125,7 @@ class PracticeRequestController extends Controller
 
         $newStatus->setAttribute('change_reason', $request->reason);
         $practiceRequest->setRelation('status', $newStatus);
-        $practiceRequest->makeHidden('status_change_reason');
+        $practiceRequest->makeHidden(['status_change_reason', 'user']);
         return response()->json(['practice_request' => $practiceRequest], 200);
     }
 }
