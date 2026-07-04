@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\PracticeGroupMessage;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -18,10 +19,10 @@ class MessageSentEvent implements ShouldBroadcast
      */
 
     public string $groupID;
-    public string $message;
+    public PracticeGroupMessage $message;
     public $senderInfo;
 
-    public function __construct(string $groupID, string $message, $senderInfo)
+    public function __construct(string $groupID, PracticeGroupMessage $message, $senderInfo)
     {
         $this->groupID = $groupID;
         $this->message = $message;
@@ -37,6 +38,20 @@ class MessageSentEvent implements ShouldBroadcast
     {
         return [
             new PrivateChannel('Group.'.$this->groupID),
+        ];
+    }
+
+    public function broadcastWith(): array {
+        $messageArray = $this->message->toArray();
+
+        $messageArray['file_download_url'] = $this->message->file_path
+            ? route('group.messages.download', ['id' => $this->message->id])
+            : null;
+
+        return [
+            'groupID'    => $this->groupID,
+            'message'    => $messageArray,
+            'senderInfo' => $this->senderInfo
         ];
     }
 }

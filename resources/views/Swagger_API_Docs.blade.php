@@ -1098,7 +1098,12 @@
                                                         "type": "object",
                                                         "properties": {
                                                             "id": { "type": "integer", "description": "ID сообщения" },
+                                                            "type": { "type": "string", "description": "Тип сообщения (text, file, hybrid)" },
                                                             "text": { "type": "string", "description": "Текст сообщения" },
+                                                            "file_name": { "type": "string", "description": "Имя файла", "nullable": true },
+                                                            "file_type": { "type": "string", "description": "MIME-тип файла", "nullable": true },
+                                                            "file_size": { "type": "integer", "description": "Размер файла в байтах", "nullable": true },
+                                                            "file_download_url": { "type": "string", "description": "Ссылка на скачивание файла", "nullable": true },
                                                             "created_at": { "type": "string", "format": "date-time", "description": "Дата и время отправки" },
                                                             "senderInfo": {
                                                                 "type": "object",
@@ -1118,7 +1123,12 @@
                                             "group_messages": [
                                                 {
                                                     "id": 1,
+                                                    "type": "text",
                                                     "text": "Привет всем!",
+                                                    "file_name": null,
+                                                    "file_type": null,
+                                                    "file_size": null,
+                                                    "file_download_url": null,
                                                     "created_at": "2026-06-28T10:00:00.000000Z",
                                                     "senderInfo": {
                                                         "id": 12,
@@ -1129,7 +1139,12 @@
                                                 },
                                                 {
                                                     "id": 2,
-                                                    "text": "Как успехи с практикой?",
+                                                    "type": "hybrid",
+                                                    "text": "Посмотрите этот файл",
+                                                    "file_name": "document.pdf",
+                                                    "file_type": "application/pdf",
+                                                    "file_size": 102400,
+                                                    "file_download_url": "https://school21test.strangled.net/api/groups/messages/2/download",
                                                     "created_at": "2026-06-28T10:05:00.000000Z",
                                                     "senderInfo": {
                                                         "id": 5,
@@ -1181,8 +1196,8 @@
                     },
                     "post": {
                         "summary": "Отправка сообщения в группу",
-                        "description": "Требует авторизации, подтверждённого email и нахождение пользователя " +
-                            "в группе. Принимает текст сообщения от пользователя, ищет группу по параметру `id` из URL, " +
+                        "description": "Требует авторизации и подтверждённого email. " +
+                        "Принимает текст сообщения и/или файл от пользователя, ищет группу по параметру `id` из URL, " +
                             "создаёт сообщение в базе и рассылает его всем участникам группы",
                         "tags": ["Группы практик"],
                         "security": [
@@ -1201,18 +1216,20 @@
                         "requestBody": {
                             "required": true,
                             "content": {
-                                "application/json": {
+                                "multipart/form-data": {
                                     "schema": {
                                         "type": "object",
                                         "properties": {
                                             "text": {
                                                 "type": "string",
                                                 "description": "Текст сообщения",
+                                            },
+                                            "file": {
+                                                "type": "string",
+                                                "format": "binary",
+                                                "description": "Файл для отправки"
                                             }
                                         }
-                                    },
-                                    "example": {
-                                        "text": "Текст сообщения"
                                     }
                                 }
                             }
@@ -1225,7 +1242,7 @@
                                 "$ref": "#/components/responses/401Unauthorized"
                             },
                             "403": {
-                                "description": "Почта не подтверждена/пользователь не состоит в этой группе",
+                                "description": "Доступ запрещён (не подтверждена почта / пользователь не в группе / тимлид другого города)",
                                 "content": {
                                     "application/json": {
                                         "examples": {
@@ -1235,8 +1252,8 @@
                                                     "message": "Почта не подтверждена"
                                                 }
                                             },
-                                            "userIsNotMember": {
-                                                "summary": "Пользователь не состоит в этой группе",
+                                            "accessDenied": {
+                                                "summary": "Доступ запрещён",
                                                 "value": {
                                                     "message": "Доступ запрещён"
                                                 }
@@ -1281,6 +1298,79 @@
                                     }
                                 }
                             },
+                        }
+                    }
+                },
+                "/groups/messages/{id}/download": {
+                    "get": {
+                        "summary": "Скачивание файла из сообщения",
+                        "description": "Требует авторизации и подтверждённого email. " +
+                            "Позволяет скачать прикрепленный к сообщению файл. " +
+                            "Тимлид может скачивать файлы из любой группы своего города. " +
+                            "Студент может скачивать файлы только из своей группы.",
+                        "tags": ["Группы практик"],
+                        "security": [
+                            {
+                                "BearerAuth": []
+                            }
+                        ],
+                        "parameters": [
+                            {
+                                "name": "id",
+                                "in": "path",
+                                "required": true,
+                                "description": "Идентификатор сообщения с файлом",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Файл успешно получен",
+                                "content": {
+                                    "application/octet-stream": {
+                                        "schema": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                }
+                            },
+                            "401": {
+                                "$ref": "#/components/responses/401Unauthorized"
+                            },
+                            "403": {
+                                "description": "Доступ запрещён (не подтверждена почта / пользователь не в группе / тимлид другого города)",
+                                "content": {
+                                    "application/json": {
+                                        "examples": {
+                                            "unverifiedEmail": {
+                                                "summary": "Не подтверждена почта",
+                                                "value": {
+                                                    "message": "Почта не подтверждена"
+                                                }
+                                            },
+                                            "accessDenied": {
+                                                "summary": "Доступ запрещён",
+                                                "value": {
+                                                    "message": "Доступ запрещён"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Сообщение не найдено",
+                                "content": {
+                                    "application/json": {
+                                        "example": {
+                                            "message": "Такого сообщения не существует"
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 },
@@ -1672,7 +1762,7 @@
                             "new_status": {
                                 "type": "string",
                                 "description": "Текстовый строковый код статуса. Должен обязательно быть существующим кодом статуса.",
-                                "enum": ["pending", "accepted", "rejected"]
+                                "enum": ["pending", "accepted", "rejected", "canceled"]
                             },
                             "reason": {
                                 "type": "string",

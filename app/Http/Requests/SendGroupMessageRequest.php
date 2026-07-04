@@ -23,7 +23,8 @@ class SendGroupMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'text' => 'required|string|max:10000'
+            'text' => 'nullable|string|max:10000|required_without:file',
+            'file' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,csv,zip,rar,7z,mp4,mov,mp3,m4a|max:51200|required_without:text',
         ];
     }
 }

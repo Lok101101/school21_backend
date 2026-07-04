@@ -12,6 +12,7 @@ use App\Models\PracticeGroupNotification;
 use App\Models\UserPracticeGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class PracticeGroupController extends Controller
 {
@@ -53,10 +54,27 @@ class PracticeGroupController extends Controller
             return response()->json(['message' => 'Группа неактивна'], 422);
         }
 
-        PracticeGroupMessage::create([
+        $hasText = $request->filled('text');
+        $file = $request->file('file');
+        $type = "";
+
+        if ($hasText && $file) {
+            $type = "hybrid";
+        } elseif ($file) {
+            $type = "file";
+        } else {
+            $type = "text";
+        }
+
+        $message = PracticeGroupMessage::create([
             'user_id' => $request->user()->id,
             'group_id' => $group->id,
-            'text' => $request->text
+            'type' => $type,
+            'text' => $request->text,
+            'file_path' => $file?->store("group_files/group_{$group->id}", 'local'),
+            'file_name' => $file?->getClientOriginalName(),
+            'file_type' => $file?->getClientMimeType(),
+            'file_size' => $file?->getSize()
         ]);
 
         if ($user->role->code !== 'teamlead') {
@@ -74,9 +92,10 @@ class PracticeGroupController extends Controller
                 'patronymic' => 'Тимлид'
             ]);
         }
+        $message->makeHidden('group_id', 'user_id');
         event(new MessageSentEvent(
             $group->id,
-            $request->text,
+            $message,
             $senderInfo
         ));
 
@@ -149,7 +168,12 @@ class PracticeGroupController extends Controller
 
                 return [
                     'id' => $message->id,
+                    'type' => $message->type,
                     'text' => $message->text,
+                    'file_name' => $message->file_name,
+                    'file_type' => $message->file_type,
+                    'file_size' => $message->file_size,
+                    'file_download_url' => $message->file_path ? route('group.messages.download', ['id' => $message->id]) : null,
                     'created_at' => $message->created_at,
                     'senderInfo' => $senderInfo
                 ];
@@ -200,5 +224,22 @@ class PracticeGroupController extends Controller
         }
 
         return response()->json(['group_notifications' => $group->notifications->makeHidden('group_id')], 200);
+    }
+
+    public function downloadFile(Request $request, $id) {
+        $message = PracticeGroupMessage::find($id);
+        if (!$message) {
+            return response()->json(['message' => 'Такого сообщения не существует'], 404);
+        }
+
+        $group = $message->group;
+        $user = $request->user();
+
+        $isTeamleadFromGroupCity = ($user->role->code === 'teamlead' && $user->city === $group->city);
+        if (!$isTeamleadFromGroupCity && !$group->hasUser($user)) {
+            return response()->json(['message' => 'Доступ запрещён'], 403);
+        }
+
+        return Storage::disk('local')->download($message->file_path, $message->file_name);
     }
 }

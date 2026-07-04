@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/my', [PracticeGroupController::class, 'getUserGroups']);
             Route::get('', [PracticeGroupController::class, 'getAllGroups'])->middleware('role:teamlead');
             Route::get('/{id}/members', [PracticeGroupController::class, 'getGroupMembers']);
+            Route::get('/messages/{id}/download', [PracticeGroupController::class, 'downloadFile'])->name('group.messages.download');
             Route::get('/{id}/messages', [PracticeGroupController::class, 'getGroupMessages']);
             Route::get('/{id}/notifications', [PracticeGroupController::class, 'getGroupNotifications']);
             Route::post('/{id}/messages', [PracticeGroupController::class, 'sendMessage']);

@@ -15,7 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('group_id')->constrained('practice_groups')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->text('text');
+            $table->string('type');
+            $table->text('text')->nullable();
+            $table->string('file_path')->nullable();
+            $table->string('file_name')->nullable();
+            $table->string('file_type')->nullable();
+            $table->unsignedBigInteger('file_size')->nullable();
             $table->timestamps();
         });
     }
