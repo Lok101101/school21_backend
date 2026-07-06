@@ -1,0 +1,557 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+    background-color: #EBEEF2;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ================== ШАПКА ================== */
+header {
+    background-color: #232930;
+    padding: 15px 40px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0 0 12px 12px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-box {
+    background-color: #5ED5C8;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 24px;
+    color: #232930;
+    position: relative;
+}
+
+.logo-box::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -15px;
+    width: 30px;
+    height: 8px;
+    background-color: #2E9AFF;
+    border-radius: 10px 0 0 10px;
+    transform: rotate(-10deg);
+}
+
+.header-title {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    background-color: #3D464F;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.user-icon {
+    width: 24px;
+    height: 24px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #3D464F;
+    font-weight: bold;
+}
+
+/* ================== МЕНЮ НАВИГАЦИИ ================== */
+.nav-tabs {
+    display: flex;
+    justify-content: space-around;
+    background-color: #232930;
+    padding: 0 30px;
+    color: #8e959d;
+    font-size: 15px;
+    margin-top: -10px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.nav-item {
+    cursor: pointer;
+    padding-bottom: 10px;
+    position: relative;
+    user-select: none;
+    transition: 0.2s;
+}
+
+.nav-item:hover { color: #ccc; }
+.nav-item.active { color: white; }
+.nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #3CEFA2;
+}
+
+/* ================== КОНТЕНТ ================== */
+.content-area {
+    background-color: #F3F5F9;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.tab-content {
+    display: none;
+    width: 100%;
+}
+
+.tab-content.active { display: block; }
+
+.card {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 40px;
+    width: 900px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.03);
+    margin: 0 auto;
+}
+
+.card.wide {
+    max-width: 1100px;
+}
+
+/* ================== СТРАНИЦА: ЗАЯВКА (ФОРМА) ================== */
+.form-title {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #111;
+}
+
+.form-group { margin-bottom: 15px; }
+
+.form-input, .form-select {
+    width: 100%;
+    border: 1px solid #EAEAEA;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+    background-color: #FAFAFA;
+    color: #333;
+}
+.form-input::placeholder { color: #ADB5BD; }
+.form-input:focus, .form-select:focus { border-color: #7B3FE4; background-color: white; }
+
+.form-input.active-border {
+    border: 2px solid #7B3FE4;
+    background-color: white;
+}
+
+.radio-group {
+    display: flex;
+    gap: 15px;
+    padding: 10px 0;
+    align-items: center;
+}
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+}
+input[type="radio"] {
+    appearance: none;
+    width: 18px; height: 18px;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    background: #f0f0f0;
+}
+input[type="radio"]:checked {
+    background-color: #3CEFA2;
+    border-color: #3CEFA2;
+}
+input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px; width: 8px; height: 8px;
+    background: white; border-radius: 50%;
+}
+
+.btn-submit {
+    background-color: #3CEFA2;
+    color: #111;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    transition: 0.2s;
+}
+.btn-submit:hover { opacity: 0.85; }
+
+/* ================== СТРАНИЦА: ПОДТВЕРЖДЕНИЕ (СТАТУСЫ) ================== */
+.status-card { text-align: center; padding: 20px 0; }
+
+.status-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #111;
+}
+.status-desc {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.status-desc p {
+    margin: 6px 0;
+}
+
+.status-btn {
+    border: none;
+    padding: 14px 40px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.status-btn:hover {
+    opacity: 0.85;
+}
+
+.btn-purple {
+    background-color: #8B42EA;
+    color: white;
+}
+
+.btn-green {
+    background-color: #3CEFA2;
+    color: #111;
+}
+
+.btn-retry {
+    background-color: #3CEFA2;
+    color: #111;
+    margin-top: 15px;
+}
+
+.btn-red {
+    background-color: #FF6B6B;
+    color: white;
+}
+
+/* ================== СТРАНИЦА: ПРАКТИКА ================== */
+.practice-card {
+    max-width: 1100px;
+    padding: 20px;
+}
+
+.practice-profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 40px;
+    padding: 20px 0;
+}
+
+.practice-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.practice-item-label {
+    font-size: 13px;
+    color: #7a7a7a;
+    font-weight: 500;
+}
+
+.practice-item-value {
+    font-size: 16px;
+    color: #111;
+    font-weight: 500;
+}
+
+.practice-chat-container {
+    display: flex;
+    gap: 30px;
+    height: 500px;
+    margin-top: 20px;
+}
+
+.practice-chat-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.practice-chat-sidebar .chat-list-item {
+    background-color: white;
+    border: 1px solid #EAEAEA;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.practice-chat-sidebar .chat-list-item.active {
+    border: 2px solid #7B3FE4;
+}
+
+.chat-avatar-small {
+    width: 40px;
+    height: 40px;
+    background-color: #ddd;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.chat-window {
+    flex-grow: 1;
+    background-color: #FAFAFA;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-bottom: 15px;
+}
+
+.message-bubble {
+    background-color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    max-width: 85%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    line-height: 1.6;
+    color: #333;
+}
+
+.message-bubble.own {
+    align-self: flex-end;
+    background: #7B3FE4;
+    color: white;
+}
+
+.message-author {
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.message-author.purple {
+    color: #8B42EA;
+}
+
+.message-author.green {
+    color: #27AE60;
+}
+
+.message-author.teal {
+    color: #2D9CDB;
+}
+
+.message-author.own {
+    color: rgba(255,255,255,0.9);
+}
+
+.chat-input-area {
+    margin-top: 15px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #f0f0f0;
+}
+
+.chat-input-area input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    font-size: 15px;
+    color: #555;
+    background: transparent;
+}
+
+.send-icon {
+    color: #555;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.send-icon:hover {
+    color: #111;
+}
+
+/* Попап профиля */
+.profile {
+    display: block;
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    width: 350px;
+    position: fixed;
+    box-sizing: border-box;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.profile.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile .profile-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.profile-email {
+    font-size: 16px;
+    color: #1D2733;
+    margin: 0;
+    font-weight: 500;
+    word-break: break-all;
+    flex: 1;
+}
+
+.profile hr {
+    margin: 12px 0;
+    border: none;
+    border-top: 1px solid #e0e0e0;
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: #9A9A9A;
+    font-size: 16px;
+    font-family: Montserrat;
+    cursor: pointer;
+    padding: 8px 0;
+    width: 100%;
+    text-align: left;
+    transition: color 0.2s;
+}
+
+.logout-button:hover {
+    color: #1D2733;
+}
+/* ================== УВЕДОМЛЕНИЯ ================== */
+#notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.notification {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    max-width: 400px;
+}
+.notification.show { transform: translateX(0); }
+.notification.success { background: #55EFC4; color: #111; }
+.notification.error { background: #FF6B6B; color: white; }
+.notification.info { background: #7B3FE4; color: white; }
+.notification.warning { background: #FDCB6E; color: #111; }
+
+/* ================== АДАПТИВНОСТЬ ================== */
+@media (max-width: 768px) {
+    header { flex-direction: column; align-items: flex-start; gap: 15px; padding: 15px 20px; }
+    .header-right { width: 100%; justify-content: flex-end; gap: 15px; }
+    .practice-profile-grid { grid-template-columns: 1fr; }
+    .practice-chat-container { flex-direction: column; height: auto; }
+    .practice-chat-sidebar { width: 100%; }
+    .chat-window { min-height: 350px; }
+    .card { padding: 25px; }
+}
