@@ -382,6 +382,8 @@ class PracticantDashboard {
                 return;
             }
 
+            const wsHost = API_BASE.replace(/^https?:\/\//, '').split(':')[0].replace(/\/api$/, '');
+
             this.echo = new Echo({
                 broadcaster: 'reverb',
                 key: window.REVERB_KEY,
@@ -391,11 +393,11 @@ class PracticantDashboard {
                         'Authorization': 'Bearer ' + token
                     }
                 },
-                authEndpoint: API_BASE.replace('/api', '') + '/broadcasting/auth',
-                wsHost: API_BASE.replace('https://', '').replace('/api', ''),
+                authEndpoint: API_BASE.replace(/\/api$/, '') + '/broadcasting/auth',
+                wsHost: wsHost,
                 wsPort: window.REVERB_PORT || 443,
                 wssPort: window.REVERB_PORT || 443,
-                forceTLS: true,
+                forceTLS: API_BASE.startsWith('https'),
                 enabledTransports: ['ws', 'wss']
             });
 

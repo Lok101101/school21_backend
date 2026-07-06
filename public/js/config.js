@@ -1,5 +1,5 @@
-const API_BASE = 'https://school21test.strangled.net/api';
-const REVERB_PORT = 443;
+const API_BASE = 'http://127.0.0.1:8000/api';
+const REVERB_PORT = 8081;
 const REVERB_KEY = 'tp27pxo8n6lafnaulg2b';
 
 window.API_BASE = API_BASE;
