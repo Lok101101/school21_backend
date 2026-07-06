@@ -393,8 +393,8 @@ class PracticantDashboard {
                 },
                 authEndpoint: API_BASE.replace('/api', '') + '/broadcasting/auth',
                 wsHost: API_BASE.replace('https://', '').replace('/api', ''),
-                wsPort: 443,
-                wssPort: 443,
+                wsPort: window.REVERB_PORT || 443,
+                wssPort: window.REVERB_PORT || 443,
                 forceTLS: true,
                 enabledTransports: ['ws', 'wss']
             });
