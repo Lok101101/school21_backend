@@ -1,58 +1,106 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏫 School 21 Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Проект представляет собой API для системы учёта практикантов Школы 21, разработанный на фреймворке **Laravel**.
+На данный момент API интегрировано в веб-сайт, но использовать его можно и на любых других платформах.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🛠 Технологический стек
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* **Язык:** PHP 8.3
+* **Фреймворк:** Laravel 13
+* **Веб-сокеты:** Laravel Reverb
+* **База данных:** PostgreSQL
+* **Веб-сервер:** Caddy
+* **Документация:** Swagger
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ✨ Ключевые возможности
 
-## Learning Laravel
+1.  Авторизация и регистрация с подтверждением электронной почты.
+2.  Роли студента и руководителя практики (тимлида) для ограничения прав.
+3.  Создание заявок на практику, возможность их отмены студентом, а также отклонение или принятие тимлидом.
+4.  Автоматическое формирование групп практикантов на основе одобренных заявок или добавление студента в уже существующую группу.
+5.  Уведомления через WebSocket и Email при изменении статуса заявки.
+6.  WebSocket-чат с поддержкой отправки файлов.
+7.  Отправка уведомлений всем участникам определенной группы через WebSocket и Email.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📖 Документация
+После развертывания проекта Swagger-документация API будет доступна по URL /api/docs.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## 🚀 Инструкция по развертыванию
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 1. Установите PHP 8.3, Composer и любую базу данных, поддерживаемую Laravel
 
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+### 2. Склонируйте проект
+```bash 
+git clone https://github.com/Lok101101/school21_backend.git
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 3. Скопируйте .env.example и переименуйте в .env
+```bash 
+cp .env.example .env
+```
 
-## Contributing
+### 4. Создайте базу данных и заполните данные для её подключения
+```dotenv
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=school21
+DB_USERNAME=postgres
+DB_PASSWORD=your_password
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 5. Заполните данные почтового сервера
+```dotenv 
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=465
+MAIL_USERNAME=your_email@gmail.com
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=ssl
+MAIL_FROM_ADDRESS=your_email@gmail.com
+MAIL_FROM_NAME="${APP_NAME}"
+```
 
-## Code of Conduct
+### 6. Заполните REVERB_APP_SECRET рандомной строкой и порт, на котором будет работать Reverb
+```dotenv    
+REVERB_APP_SECRET=zmuaywwvzdpwi4k6i9g1
+REVERB_PORT=8081
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 7. В public/js/config.js заполните API_BASE текущим доменом/ip и REVERB_PORT тем портом, на котором будет работать Reverb
+```js    
+const API_BASE = 'http://127.0.0.1:8000/api';
+const REVERB_PORT = 8081;
+```
 
-## Security Vulnerabilities
+### 8. Установите зависимости при помощи Composer
+```bash 
+composer i
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 9. Сгенерируйте ключ приложения
+```bash 
+php artisan key:generate
+```
 
-## License
+### 10. Выполните миграции и сидеры
+Если вам нужны уже зарегистрированные пользователи для теста,
+нужно раскомментировать UsersSeeder::class в
+database/seeders/DatabaseSeeder.php
+```bash 
+php artisan migrate --seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 11. Запустите Laravel и Websocket сервер с нужным портом
+```bash
+php artisan reverb:start --port 8081
+php artisan serve
+```
+### 🎉 Теперь веб-сайт доступен на http://127.0.0.1:8000

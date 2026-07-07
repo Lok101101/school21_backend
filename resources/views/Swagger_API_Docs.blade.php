@@ -50,8 +50,7 @@
             },
             "servers": [
                 {
-                    "url": "https://school21test.strangled.net/api",
-                    "description": "Тестовый сервер API"
+                    "url": "http://127.0.0.1:8000/api"
                 }
             ],
             "tags": [
