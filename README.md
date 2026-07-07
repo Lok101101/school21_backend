@@ -91,9 +91,10 @@ php artisan key:generate
 ```
 
 ### 10. Выполните миграции и сидеры
-Если вам нужны уже зарегистрированные пользователи для теста,
-нужно раскомментировать UsersSeeder::class в
-database/seeders/DatabaseSeeder.php
+> [!NOTE] 
+> Если вам нужны уже зарегистрированные пользователи для теста,
+> нужно раскомментировать UsersSeeder::class в
+> database/seeders/DatabaseSeeder.php
 ```bash 
 php artisan migrate --seed
 ```
